@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✦ SHIKACHIKA BOOTH</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#FAF6F0;--blush:#F2DDD5;--rose:#D4957A;--deep:#2C1F1A;--mid:#6B4E44;--soft:#E8D5CC;--white:#FFFFFF;--accent:#C97B5E;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--deep);min-height:100vh;overflow-x:hidden;}
+header{text-align:center;padding:1.8rem 1rem 1.1rem;border-bottom:1px solid var(--soft);}
+.logo{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4.5vw,2.8rem);letter-spacing:0.12em;}
+.logo span{color:var(--accent);font-style:italic;}
+header p{font-size:0.7rem;letter-spacing:0.22em;color:var(--mid);text-transform:uppercase;margin-top:0.25rem;}
+.tab-bar{display:flex;border-bottom:1px solid var(--soft);background:var(--white);}
+.tab-btn{flex:1;padding:0.8rem;font-family:'DM Sans',sans-serif;font-size:0.73rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--mid);background:transparent;border:none;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;}
+.tab-btn.active{color:var(--deep);border-bottom-color:var(--accent);}
+.tab-pane{display:none;}.tab-pane.active{display:block;}
+.app{max-width:1100px;margin:0 auto;padding:1.8rem 1.5rem;display:grid;grid-template-columns:290px 1fr;gap:1.8rem;}
+@media(max-width:768px){.app{grid-template-columns:1fr;}}
+.sidebar{display:flex;flex-direction:column;gap:1.1rem;}
+.panel{background:var(--white);border:1px solid var(--soft);border-radius:14px;overflow:hidden;}
+.ph{padding:0.8rem 1.1rem 0.65rem;border-bottom:1px solid var(--soft);}
+.ph h3{font-size:0.67rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:var(--mid);}
+.pb{padding:0.85rem 1.1rem;}
+.frame-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;}
+.frame-thumb{aspect-ratio:1/2;border-radius:7px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:all 0.15s;position:relative;background:var(--cream);display:flex;align-items:center;justify-content:center;}
+.frame-thumb img{width:100%;height:100%;object-fit:cover;}
+.frame-thumb.active{border-color:var(--accent);box-shadow:0 0 0 3px rgba(201,123,94,0.2);}
+.frame-thumb:hover{border-color:var(--rose);}
+.frame-thumb.no-frame{background:repeating-conic-gradient(#E8D5CC 0% 25%,#FAF6F0 0% 50%) 0 0/10px 10px;flex-direction:column;gap:3px;}
+.ft-lbl{position:absolute;bottom:0;left:0;right:0;text-align:center;font-size:0.5rem;letter-spacing:0.06em;color:var(--mid);text-transform:uppercase;font-weight:600;background:rgba(250,246,240,0.9);padding:2px 0;}
+.upload-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:0.52rem;border:1.5px dashed var(--rose);background:transparent;border-radius:9px;color:var(--accent);font-size:0.71rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:all 0.18s;font-family:'DM Sans',sans-serif;}
+.upload-btn:hover{background:var(--blush);border-color:var(--accent);}
+.row-btns{display:flex;gap:5px;}
+.pill{flex:1;padding:0.45rem 0.2rem;border:1px solid var(--soft);background:transparent;border-radius:7px;font-size:0.73rem;font-weight:500;color:var(--mid);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.12s;text-align:center;}
+.pill.active{background:var(--deep);color:var(--white);border-color:var(--deep);}
+.filter-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;}
+.filter-btn{aspect-ratio:1;border-radius:6px;border:2px solid transparent;cursor:pointer;overflow:hidden;transition:all 0.12s;}
+.filter-btn.active{border-color:var(--accent);}
+.fprev{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:0.5rem;font-weight:600;text-transform:uppercase;}
+
+/* idol panel */
+.idol-zone{display:flex;flex-direction:column;gap:7px;}
+.idol-cam-preview{position:relative;width:100%;aspect-ratio:4/3;background:#111;border-radius:10px;overflow:hidden;display:none;}
+.idol-cam-preview canvas{position:absolute;inset:0;width:100%;height:100%;}
+.mode-row{display:flex;gap:5px;}
+.mode-pill{flex:1;padding:0.4rem 0.15rem;border:1px solid var(--soft);background:transparent;border-radius:7px;font-size:0.62rem;font-weight:500;color:var(--mid);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.12s;text-align:center;line-height:1.35;}
+.mode-pill.active{background:var(--deep);color:white;border-color:var(--deep);}
+.hint{font-size:0.63rem;color:var(--mid);line-height:1.55;text-align:center;}
+
+/* camera main */
+.main-area{display:flex;flex-direction:column;gap:1.4rem;}
+.camera-panel{background:var(--white);border:1px solid var(--soft);border-radius:18px;overflow:hidden;}
+.camera-wrap{position:relative;background:#1a1210;overflow:hidden;}
+.camera-wrap.default-ratio{aspect-ratio:4/3;}
+/* video fills the wrap visibly */
+#video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block;}
+/* overlay canvas: draws idol right-half + frame PNG — video shows through transparent parts */
+#camCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.cam-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9rem;color:rgba(255,255,255,0.4);font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;z-index:3;background:#1a1210;}
+#cntOvr{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:10;background:rgba(44,31,26,0.35);}
+.cnt-num{font-family:'Playfair Display',serif;font-size:6.5rem;color:white;text-shadow:0 2px 20px rgba(0,0,0,0.5);animation:countPop 1s ease-out;}
+@keyframes countPop{0%{transform:scale(1.5);opacity:0;}30%{transform:scale(1);opacity:1;}80%{transform:scale(1);opacity:1;}100%{transform:scale(0.8);opacity:0;}}
+.flash-el{position:absolute;inset:0;background:white;z-index:20;opacity:0;pointer-events:none;transition:opacity 0.05s;}
+.flash-el.on{opacity:1;}
+.shot-prog{display:flex;gap:4px;padding:7px 14px;background:var(--deep);justify-content:center;}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);transition:all 0.25s;cursor:pointer;}
+.dot.taken{background:var(--rose);}
+.dot.active{background:white;transform:scale(1.3);}
+.dot:hover{background:#ffb89a;}
+.rec{position:absolute;top:9px;right:9px;width:8px;height:8px;background:#ff4444;border-radius:50%;z-index:15;display:none;animation:blink .7s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.cam-ctrl{padding:1.05rem;display:flex;align-items:center;justify-content:center;gap:.8rem;flex-wrap:wrap;}
+.btn-main{padding:.75rem 1.9rem;background:var(--deep);color:var(--white);border:none;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:500;letter-spacing:0.13em;text-transform:uppercase;cursor:pointer;transition:all 0.18s;}
+.btn-main:hover{background:var(--accent);transform:translateY(-1px);}
+.btn-main:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+.btn-sec{padding:.68rem 1.1rem;background:transparent;color:var(--mid);border:1px solid var(--soft);border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.73rem;cursor:pointer;transition:all 0.18s;}
+.btn-sec:hover{border-color:var(--rose);color:var(--accent);}
+.status-bar{text-align:center;padding:.42rem;font-size:0.67rem;letter-spacing:0.13em;text-transform:uppercase;color:var(--mid);background:var(--cream);border-top:1px solid var(--soft);}
+
+/* slots guide overlay */
+.slots-info{font-size:.65rem;color:var(--mid);text-align:center;padding:4px 0 2px;line-height:1.4;}
+
+/* result */
+.result-sec{display:none;background:var(--white);border:1px solid var(--soft);border-radius:18px;overflow:hidden;}
+.result-sec.show{display:block;}
+.res-head{padding:.95rem 1.2rem;border-bottom:1px solid var(--soft);display:flex;align-items:center;justify-content:space-between;}
+.res-head h3{font-family:'Playfair Display',serif;font-size:.97rem;font-style:italic;}
+.res-body{padding:1.2rem;display:flex;gap:1.2rem;align-items:flex-start;flex-wrap:wrap;}
+#result-canvas{display:block;border-radius:8px;max-height:560px;width:auto;max-width:100%;box-shadow:0 4px 22px rgba(44,31,26,0.11);}
+.res-actions{display:flex;flex-direction:column;gap:.65rem;min-width:140px;}
+.btn-dl{padding:.68rem 1.1rem;background:var(--deep);color:white;border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;letter-spacing:.09em;text-transform:uppercase;cursor:pointer;transition:all .18s;text-align:center;display:block;text-decoration:none;}
+.btn-dl:hover{background:var(--accent);}
+.btn-retake-all{padding:.68rem 1.1rem;background:transparent;color:var(--mid);border:1px solid var(--soft);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:.75rem;cursor:pointer;transition:all .18s;}
+.btn-retake-all:hover{border-color:var(--rose);color:var(--accent);}
+.retake-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:3px;}
+.retake-thumb{position:relative;cursor:pointer;border-radius:5px;overflow:hidden;border:2px solid transparent;transition:all .13s;}
+.retake-thumb:hover{border-color:var(--accent);}
+.retake-thumb img{display:block;height:80px;width:auto;}
+.retake-badge{position:absolute;inset:0;background:rgba(201,123,94,.82);display:none;align-items:center;justify-content:center;font-size:.58rem;color:white;letter-spacing:.08em;text-transform:uppercase;font-weight:600;}
+.retake-thumb:hover .retake-badge{display:flex;}
+
+/* designer tab */
+.designer-wrap{max-width:1100px;margin:0 auto;padding:1.8rem 1.5rem;display:grid;grid-template-columns:250px 1fr;gap:1.8rem;}
+@media(max-width:768px){.designer-wrap{grid-template-columns:1fr;}}
+.tools-col{display:flex;flex-direction:column;gap:1rem;}
+.canvas-col{display:flex;flex-direction:column;gap:.9rem;}
+.design-canvas-wrap{background:var(--white);border:1px solid var(--soft);border-radius:14px;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:1.2rem;}
+#designCanvas{border:1px solid var(--soft);border-radius:7px;cursor:crosshair;max-width:100%;}
+.tool-row{display:flex;gap:5px;flex-wrap:wrap;}
+.tool-btn{padding:.38rem .65rem;border:1px solid var(--soft);background:transparent;border-radius:6px;font-size:.7rem;color:var(--mid);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s;}
+.tool-btn.active{background:var(--deep);color:white;border-color:var(--deep);}
+.tool-btn:hover:not(.active){border-color:var(--rose);color:var(--accent);}
+.color-row{display:flex;gap:4px;flex-wrap:wrap;align-items:center;}
+.color-dot{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .12s;flex-shrink:0;}
+.color-dot.active{border-color:var(--deep);transform:scale(1.2);}
+#customColor{width:24px;height:24px;border:none;border-radius:50%;cursor:pointer;padding:0;background:none;}
+.slider-row{display:flex;align-items:center;gap:7px;}
+.slider-row label{font-size:.65rem;color:var(--mid);white-space:nowrap;min-width:46px;}
+.slider-row input[type=range]{flex:1;}
+.slider-row span{font-size:.65rem;color:var(--mid);min-width:26px;text-align:right;}
+.sticker-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;}
+.sticker-btn{aspect-ratio:1;border:1px solid var(--soft);border-radius:7px;background:transparent;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.sticker-btn:hover{background:var(--blush);border-color:var(--rose);}
+.text-input-row{display:flex;gap:5px;}
+.text-input-row input{flex:1;padding:.42rem .65rem;border:1px solid var(--soft);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:.75rem;color:var(--deep);background:var(--cream);}
+canvas#hidden{display:none;}
+
+/* library tab */
+.library-wrap{max-width:1100px;margin:0 auto;padding:1.8rem 1.5rem;}
+.lib-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;}
+.lib-header h2{font-family:'Playfair Display',serif;font-size:1.2rem;font-style:italic;}
+.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;}
+.lib-card{background:var(--white);border:1px solid var(--soft);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .15s;}
+.lib-card:hover{border-color:var(--accent);box-shadow:0 4px 16px rgba(201,123,94,0.15);}
+.lib-card img{width:100%;display:block;}
+.lib-card-footer{padding:.5rem .7rem;display:flex;align-items:center;justify-content:space-between;}
+.lib-card-date{font-size:.6rem;color:var(--mid);letter-spacing:.05em;}
+.lib-del{background:none;border:none;cursor:pointer;color:var(--mid);font-size:.75rem;padding:2px 4px;border-radius:4px;transition:all .12s;}
+.lib-del:hover{background:var(--blush);color:var(--accent);}
+.lib-empty{text-align:center;padding:3rem;color:var(--mid);font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;}
+.lib-card-actions{display:flex;gap:4px;padding:.4rem .7rem .5rem;}
+.lib-foto-btn{flex:1;padding:.35rem .4rem;background:var(--accent);color:white;border:none;border-radius:6px;font-size:.6rem;font-weight:600;cursor:pointer;letter-spacing:.04em;transition:all .12s;}
+.lib-foto-btn:hover{background:var(--deep);}
+.lib-save-note{font-size:.62rem;color:var(--mid);text-align:center;padding:.3rem .7rem .5rem;}
+
+/* library sub-tabs */
+.lib-subtab-bar{display:flex;border-bottom:1px solid var(--soft);margin-bottom:1.2rem;gap:0;}
+.lib-subtab{flex:1;padding:.6rem .5rem;font-size:.72rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);background:transparent;border:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.lib-subtab.active{color:var(--deep);border-bottom-color:var(--accent);}
+.lib-subtab-pane{display:none;}.lib-subtab-pane.active{display:block;}
+
+/* gallery grid */
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;}
+.gallery-card{background:var(--white);border:1px solid var(--soft);border-radius:12px;overflow:hidden;transition:all .15s;}
+.gallery-card:hover{border-color:var(--accent);box-shadow:0 4px 16px rgba(201,123,94,0.12);}
+.gallery-card img{width:100%;display:block;cursor:pointer;}
+.gallery-card-actions{padding:.5rem .7rem;display:flex;gap:5px;}
+.gallery-action-btn{flex:1;padding:.3rem .3rem;border:1px solid var(--soft);background:transparent;border-radius:6px;font-size:.6rem;font-weight:500;color:var(--mid);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;}
+.gallery-action-btn:hover{border-color:var(--accent);color:var(--accent);}
+.gallery-action-btn.del:hover{border-color:#e57373;color:#e57373;}
+.gallery-card-meta{padding:.3rem .7rem .5rem;font-size:.58rem;color:var(--mid);}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">shikachika <span>booth</span></div>
+  <p>✦ capture your moment ✦</p>
+</header>
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('booth',this)">📷 Photo Booth</button>
+  <button class="tab-btn" onclick="switchTab('designer',this)">🎨 Frame Designer</button>
+  <button class="tab-btn" id="libTabBtn" onclick="switchTab('library',this);loadLibrary()">🗂 Library</button>
+</div>
+
+<!-- ══ BOOTH TAB ══ -->
+<div class="tab-pane active" id="tab-booth">
+<div class="app">
+  <aside class="sidebar">
+
+    <!-- Idol -->
+    <div class="panel">
+      <div class="ph"><h3>🌟 Foto Idol (opsional)</h3></div>
+      <div class="pb idol-zone">
+        <p class="hint" id="idolHintPre">Upload foto idol (PNG transparan) → foto bareng!<br>Hapus bg dulu di tool lain ya.</p>
+        <input type="file" id="idolInput" style="display:none;" accept="image/*" multiple>
+        <button class="upload-btn" onclick="document.getElementById('idolInput').click()">⊕ Upload foto idol</button>
+        <!-- Idol poses grid -->
+        <div id="idolPosesGrid" style="display:none;display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:4px;"></div>
+        <div id="idolControls" style="display:none;flex-direction:column;gap:6px;margin-top:4px;">
+          <div class="slider-row" style="display:flex;align-items:center;gap:7px;">
+            <label style="font-size:.62rem;color:var(--mid);white-space:nowrap;">Ukuran</label>
+            <input type="range" id="idolScale" min="30" max="130" value="80" style="flex:1;" oninput="idolScale=this.value/100;document.getElementById('idolScaleVal').textContent=this.value+'%'">
+            <span id="idolScaleVal" style="font-size:.62rem;color:var(--mid);min-width:28px;">80%</span>
+          </div>
+          <button class="upload-btn" style="font-size:.62rem;padding:.38rem;background:var(--accent);border-color:var(--accent);color:white;" onclick="saveCurrentIdolToLibrary()">🗂 Simpan Pose ke Library</button>
+          <button class="upload-btn" style="font-size:.62rem;padding:.38rem;" onclick="clearIdolPoses()">✕ Hapus semua pose</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timer -->
+    <div class="panel">
+      <div class="ph"><h3>⏱ Timer</h3></div>
+      <div class="pb">
+        <div class="row-btns">
+          <button class="pill active" data-sec="0" onclick="setTimer(this)">0s</button>
+          <button class="pill" data-sec="3" onclick="setTimer(this)">3s</button>
+          <button class="pill" data-sec="5" onclick="setTimer(this)">5s</button>
+          <button class="pill" data-sec="10" onclick="setTimer(this)">10s</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter -->
+    <div class="panel">
+      <div class="ph"><h3>🎞 Filter</h3></div>
+      <div class="pb">
+        <div class="filter-grid">
+          <button class="filter-btn active" data-filter="none" onclick="setFilter(this)"><div class="fprev" style="background:linear-gradient(135deg,#f5f0ea,#e8d5cc);color:var(--deep);">Normal</div></button>
+          <button class="filter-btn" data-filter="mono" onclick="setFilter(this)"><div class="fprev" style="background:linear-gradient(135deg,#888,#333);">Mono</div></button>
+          <button class="filter-btn" data-filter="warm" onclick="setFilter(this)"><div class="fprev" style="background:linear-gradient(135deg,#f5c98a,#d4957a);">Warm</div></button>
+          <button class="filter-btn" data-filter="cool" onclick="setFilter(this)"><div class="fprev" style="background:linear-gradient(135deg,#a8c8e8,#6ba0c8);">Cool</div></button>
+          <button class="filter-btn" data-filter="vivid" onclick="setFilter(this)"><div class="fprev" style="background:linear-gradient(135deg,#f87,#c5f);">Vivid</div></button>
+          <button class="filter-btn" data-filter="vintage" onclick="setFilter(this)"><div class="fprev" style="background:linear-gradient(135deg,#c9a96e,#8b6340);">Vintage</div></button>
+          <button class="filter-btn" data-filter="soft" onclick="setFilter(this)"><div class="fprev" style="background:linear-gradient(135deg,#fde8f0,#e8c4d8);">Soft</div></button>
+          <button class="filter-btn" data-filter="fade" onclick="setFilter(this)"><div class="fprev" style="background:linear-gradient(135deg,#d8cfc4,#b5a99e);">Fade</div></button>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-area">
+    <div class="camera-panel">
+      <div class="camera-wrap default-ratio" id="cameraWrap">
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="camCanvas"></canvas>
+        <div class="cam-placeholder" id="placeholder">
+          <span style="font-size:2.5rem;opacity:.3;">◎</span>
+          <span>Klik "Buka Kamera"</span>
+        </div>
+        <div id="cntOvr"><span class="cnt-num" id="cntNum">3</span></div>
+        <div class="flash-el" id="flashEl"></div>
+        <div class="rec" id="recDot"></div>
+      </div>
+      <div class="shot-prog" id="shotProg" style="display:none;"></div>
+      <div class="cam-ctrl">
+        <button class="btn-sec" onclick="openCamera()">◎ Buka Kamera</button>
+        <button class="btn-main" id="btnShoot" onclick="startShooting()" disabled>✦ Mulai Foto</button>
+        <button class="btn-sec" id="btnFlip" onclick="flipCamera()" style="display:none;">⇄ Balik</button>
+      </div>
+      <div class="status-bar" id="statusBar">Siap untuk sesi foto ✦</div>
+    </div>
+    <div class="result-sec" id="resultSec">
+      <div class="res-head">
+        <h3>Hasil Fotomu ✦</h3>
+        <span style="font-size:.67rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);">shikachika booth</span>
+      </div>
+      <div class="res-body">
+        <canvas id="result-canvas"></canvas>
+        <div class="res-actions">
+          <a class="btn-dl" id="btnDl" download="shikachika_booth.png">⬇ Download</a>
+          <button class="btn-dl" onclick="saveToGallery()" style="background:var(--accent);">🖼 Simpan ke Gallery</button>
+          <button class="btn-retake-all" onclick="retakeAll()">↺ Reset Semua</button>
+          <div style="margin-top:3px;">
+            <p style="font-size:.63rem;color:var(--mid);margin-bottom:5px;letter-spacing:.05em;">Klik foto untuk retake satu:</p>
+            <div class="retake-grid" id="retakeGrid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</div>
+
+<!-- ══ DESIGNER TAB ══ -->
+<div class="tab-pane" id="tab-designer">
+<div class="designer-wrap">
+  <aside class="tools-col">
+    <div class="panel">
+      <div class="ph"><h3>📐 Canvas</h3></div>
+      <div class="pb" style="display:flex;flex-direction:column;gap:7px;">
+        <div class="row-btns">
+          <button class="pill active" data-ratio="2/3" onclick="setCanvasRatio(this,300,450)">2:3</button>
+          <button class="pill" data-ratio="9/16" onclick="setCanvasRatio(this,280,497)">9:16</button>
+          <button class="pill" data-ratio="1/1" onclick="setCanvasRatio(this,400,400)">1:1</button>
+        </div>
+        <button class="upload-btn" onclick="document.getElementById('bgImgInput').click()">⊕ Import foto idol</button>
+        <input type="file" id="bgImgInput" style="display:none;" accept="image/*">
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h3>🎨 Alat</h3></div>
+      <div class="pb" style="display:flex;flex-direction:column;gap:8px;">
+        <div class="tool-row">
+          <button class="tool-btn active" id="toolSelect" onclick="setTool('select',this)">↖ Select</button>
+          <button class="tool-btn" id="toolDraw" onclick="setTool('draw',this)">✏ Draw</button>
+          <button class="tool-btn" id="toolRect" onclick="setTool('rect',this)">▭ Rect</button>
+          <button class="tool-btn" id="toolErase" onclick="setTool('erase',this)">◻ Erase</button>
+        </div>
+        <div class="slider-row"><label>Ukuran</label><input type="range" min="1" max="60" value="8" id="brushSize" oninput="document.getElementById('bsVal').textContent=this.value"><span id="bsVal">8</span></div>
+        <div class="slider-row"><label>Opacity</label><input type="range" min="10" max="100" value="100" id="brushOpacity" oninput="document.getElementById('boVal').textContent=this.value+'%'"><span id="boVal">100%</span></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h3>🎨 Warna</h3></div>
+      <div class="pb">
+        <div class="color-row" id="colorRow">
+          <div class="color-dot active" style="background:#2C1F1A;" data-color="#2C1F1A" onclick="setColor(this)"></div>
+          <div class="color-dot" style="background:#FFFFFF;border:1px solid #ddd;" data-color="#FFFFFF" onclick="setColor(this)"></div>
+          <div class="color-dot" style="background:#D4957A;" data-color="#D4957A" onclick="setColor(this)"></div>
+          <div class="color-dot" style="background:#C97B5E;" data-color="#C97B5E" onclick="setColor(this)"></div>
+          <div class="color-dot" style="background:#F2DDD5;" data-color="#F2DDD5" onclick="setColor(this)"></div>
+          <div class="color-dot" style="background:#6B4E44;" data-color="#6B4E44" onclick="setColor(this)"></div>
+          <div class="color-dot" style="background:#ff9eb5;" data-color="#ff9eb5" onclick="setColor(this)"></div>
+          <div class="color-dot" style="background:#ffe066;" data-color="#ffe066" onclick="setColor(this)"></div>
+          <div class="color-dot" style="background:#7ec8e3;" data-color="#7ec8e3" onclick="setColor(this)"></div>
+          <div class="color-dot" style="background:#b8f5b0;" data-color="#b8f5b0" onclick="setColor(this)"></div>
+          <input type="color" id="customColor" value="#C97B5E" onchange="setColorHex(this.value)">
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h3>✨ Stiker & Teks</h3></div>
+      <div class="pb" style="display:flex;flex-direction:column;gap:7px;">
+        <div class="sticker-grid" id="stickerGrid"></div>
+        <div class="text-input-row">
+          <input type="text" id="textInput" placeholder="Ketik teks..." maxlength="40">
+          <button class="tool-btn" onclick="addTextSticker()">+ Add</button>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h3>📦 Export</h3></div>
+      <div class="pb" style="display:flex;flex-direction:column;gap:6px;">
+        <button class="btn-main" style="width:100%;padding:.7rem;background:var(--accent);" onclick="exportDesignAsIdol()">🌟 Jadikan Idol (Foto Bareng)</button>
+        <button class="btn-sec" style="width:100%;" onclick="downloadDesign()">⬇ Download PNG</button>
+        <button class="btn-sec" style="width:100%;font-size:.68rem;" onclick="clearDesignCanvas()">✕ Reset Canvas</button>
+        <p class="hint" style="margin-top:1px;">Import foto → ganti pose → Jadikan Idol lagi = tambah pose baru! Bisa sampai 4 pose.</p>
+      </div>
+    </div>
+  </aside>
+  <div class="canvas-col">
+    <div class="design-canvas-wrap">
+      <canvas id="designCanvas" width="300" height="450"></canvas>
+    </div>
+    <p class="hint">Klik objek untuk select · Delete/Backspace untuk hapus</p>
+  </div>
+</div>
+</div>
+
+<!-- ══ LIBRARY TAB ══ -->
+<div class="tab-pane" id="tab-library">
+<div class="library-wrap">
+  <div class="lib-header">
+    <h2>Library ✦</h2>
+    <span style="font-size:.62rem;color:var(--mid);">☁ Cloud — buka di device manapun</span>
+  </div>
+  <p style="font-size:.62rem;color:var(--mid);margin-bottom:1rem;line-height:1.5;">☁ Tersimpan di cloud Supabase — bisa diakses dari HP, laptop, atau device lain kapanpun.</p>
+
+  <!-- Sub-tabs -->
+  <div class="lib-subtab-bar">
+    <button class="lib-subtab active" id="subtab-gallery-btn" onclick="switchLibSubtab('gallery',this)">🖼 Gallery</button>
+    <button class="lib-subtab" id="subtab-idol-btn" onclick="switchLibSubtab('idol',this)">🌟 Idol Poses</button>
+  </div>
+
+  <!-- Gallery pane -->
+  <div class="lib-subtab-pane active" id="libpane-gallery">
+    <div class="gallery-grid" id="galleryGrid"><div class="lib-empty">Belum ada foto tersimpan</div></div>
+  </div>
+
+  <!-- Idol Poses pane -->
+  <div class="lib-subtab-pane" id="libpane-idol">
+    <div class="lib-grid" id="libGrid"><div class="lib-empty">Belum ada pose idol tersimpan</div></div>
+  </div>
+</div>
+</div>
+
+<canvas id="hidden"></canvas>
+<div id="frameGrid" style="display:none;"></div>
+
+<script>
+// ════════════════════════════════════════
+// SUPABASE CONFIG
+// ════════════════════════════════════════
+const SUPA_URL = 'https://yuotxqkbfqbosxnhdcav.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1b3R4cWtiZnFib3N4bmhkY2F2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMzY1MzQsImV4cCI6MjA5NTYxMjUzNH0.HFRGLWPL8kUJ80gTQ-3LX-dSffexWZ0XFipiy6FaTIQ';
+const BUCKET = 'booth-files';
+
+const sbHeaders = {
+  'apikey': SUPA_KEY,
+  'Authorization': 'Bearer ' + SUPA_KEY,
+  'Content-Type': 'application/json'
+};
+
+// Upload a base64/dataURL file to Supabase Storage, return public URL
+async function sbUploadFile(dataUrl, path) {
+  // Convert dataUrl to blob
+  const res = await fetch(dataUrl);
+  const blob = await res.blob();
+  const uploadRes = await fetch(`${SUPA_URL}/storage/v1/object/${BUCKET}/${path}`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY,
+      'Content-Type': blob.type,
+      'x-upsert': 'true'
+    },
+    body: blob
+  });
+  if (!uploadRes.ok) throw new Error('Upload failed: ' + await uploadRes.text());
+  return `${SUPA_URL}/storage/v1/object/public/${BUCKET}/${path}`;
+}
+
+// Insert a row into library_items
+async function sbInsert(item) {
+  const r = await fetch(`${SUPA_URL}/rest/v1/library_items`, {
+    method: 'POST',
+    headers: {...sbHeaders, 'Prefer': 'return=representation'},
+    body: JSON.stringify(item)
+  });
+  if (!r.ok) throw new Error('Insert failed: ' + await r.text());
+  return r.json();
+}
+
+// Fetch all library items ordered by created_at desc
+async function sbFetch() {
+  const r = await fetch(`${SUPA_URL}/rest/v1/library_items?order=created_at.desc`, {
+    headers: sbHeaders
+  });
+  if (!r.ok) throw new Error('Fetch failed');
+  return r.json();
+}
+
+// Delete a row by id
+async function sbDelete(id) {
+  const r = await fetch(`${SUPA_URL}/rest/v1/library_items?id=eq.${id}`, {
+    method: 'DELETE',
+    headers: sbHeaders
+  });
+  if (!r.ok) throw new Error('Delete failed');
+}
+
+// Delete file from storage
+async function sbDeleteFile(path) {
+  await fetch(`${SUPA_URL}/storage/v1/object/${BUCKET}/${path}`, {
+    method: 'DELETE',
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+  });
+}
+
+// ════════════════════════════════════════
+// SLOT DETECTION: find rectangular white/transparent areas in a frame PNG
+// Returns array of {x,y,w,h} in PIXEL coords of the frame image
+// ════════════════════════════════════════
+function detectSlots(frameImg, threshold=240) {
+  const W = frameImg.naturalWidth, H = frameImg.naturalHeight;
+  const cvs = document.createElement('canvas');
+  cvs.width = W; cvs.height = H;
+  const ctx = cvs.getContext('2d');
+  ctx.drawImage(frameImg, 0, 0);
+  const data = ctx.getImageData(0, 0, W, H).data;
+
+  // Build binary mask: 1 = "open" (white or transparent), 0 = "frame"
+  const mask = new Uint8Array(W * H);
+  for (let i = 0; i < W * H; i++) {
+    const r = data[i*4], g = data[i*4+1], b = data[i*4+2], a = data[i*4+3];
+    // transparent OR near-white
+    mask[i] = (a < 60 || (r > threshold && g > threshold && b > threshold)) ? 1 : 0;
+  }
+
+  // Horizontal run-length rows: find rows that are >70% open
+  // Then cluster vertically into slot bands, then find horizontal extent
+  const rowOpen = new Float32Array(H);
+  for (let y = 0; y < H; y++) {
+    let cnt = 0;
+    for (let x = 0; x < W; x++) cnt += mask[y*W+x];
+    rowOpen[y] = cnt / W;
+  }
+
+  // Find vertical bands of "open" rows (>60% open)
+  const OPEN_THRESH = 0.6;
+  const bands = [];
+  let inBand = false, bandStart = 0;
+  for (let y = 0; y < H; y++) {
+    if (!inBand && rowOpen[y] > OPEN_THRESH) { inBand = true; bandStart = y; }
+    else if (inBand && rowOpen[y] <= OPEN_THRESH) { inBand = false; bands.push([bandStart, y-1]); }
+  }
+  if (inBand) bands.push([bandStart, H-1]);
+
+  // Merge bands that are very close (<5% of H apart)
+  const merged = [];
+  for (const b of bands) {
+    if (merged.length && b[0] - merged[merged.length-1][1] < H*0.05) {
+      merged[merged.length-1][1] = b[1];
+    } else {
+      merged.push([...b]);
+    }
+  }
+
+  // Filter tiny bands (<5% H)
+  const slotBands = merged.filter(b => (b[1]-b[0]) > H*0.05);
+
+  // For each band, find horizontal extent of open pixels
+  const slots = slotBands.map(([y0, y1]) => {
+    let xMin = W, xMax = 0;
+    for (let y = y0; y <= y1; y++) {
+      for (let x = 0; x < W; x++) {
+        if (mask[y*W+x]) { xMin = Math.min(xMin, x); xMax = Math.max(xMax, x); }
+      }
+    }
+    return { x: xMin, y: y0, w: xMax - xMin, h: y1 - y0 };
+  });
+
+  return slots.length > 0 ? slots : null;
+}
+
+// ════════════════════════════════════════
+// SMART WHITE ERASE — only erase large contiguous white regions
+// (flood-fill from edges to avoid erasing white on clothing)
+// ════════════════════════════════════════
+function smartEraseWhite(imgEl, threshold=238) {
+  const W = imgEl.naturalWidth, H = imgEl.naturalHeight;
+  const cvs = document.createElement('canvas');
+  cvs.width = W; cvs.height = H;
+  const ctx = cvs.getContext('2d');
+  ctx.drawImage(imgEl, 0, 0);
+  const id = ctx.getImageData(0, 0, W, H);
+  const d = id.data;
+
+  // Mark near-white pixels
+  const isWhite = new Uint8Array(W * H);
+  for (let i = 0; i < W * H; i++) {
+    const r=d[i*4],g=d[i*4+1],b=d[i*4+2],a=d[i*4+3];
+    isWhite[i] = (a > 10 && r > threshold && g > threshold && b > threshold) ? 1 : 0;
+  }
+
+  // BFS flood-fill from all 4 edges to find "background" white
+  const visited = new Uint8Array(W * H);
+  const queue = [];
+  // seed edges
+  for (let x = 0; x < W; x++) { if (isWhite[x]) { visited[x]=1; queue.push(x); } if (isWhite[(H-1)*W+x]) { visited[(H-1)*W+x]=1; queue.push((H-1)*W+x); } }
+  for (let y = 0; y < H; y++) { if (isWhite[y*W]) { visited[y*W]=1; queue.push(y*W); } if (isWhite[y*W+W-1]) { visited[y*W+W-1]=1; queue.push(y*W+W-1); } }
+
+  const dirs = [-1, 1, -W, W];
+  let qi = 0;
+  while (qi < queue.length) {
+    const idx = queue[qi++];
+    for (const d2 of dirs) {
+      const ni = idx + d2;
+      if (ni < 0 || ni >= W*H) continue;
+      // check we don't cross row boundary for left/right moves
+      if (d2 === -1 && idx % W === 0) continue;
+      if (d2 === 1 && idx % W === W-1) continue;
+      if (!visited[ni] && isWhite[ni]) { visited[ni]=1; queue.push(ni); }
+    }
+  }
+
+  // Erase only flood-filled (background) white pixels
+  for (let i = 0; i < W * H; i++) {
+    if (visited[i]) d[i*4+3] = 0;
+  }
+  ctx.putImageData(id, 0, 0);
+  return cvs.toDataURL('image/png');
+}
+
+
+// ── SMOOTH ERASE: conservative flood-fill from edges + smooth distance-based alpha
+// Key insight: only erase pixels reachable from the image BORDER through near-white path
+// This preserves white areas inside the subject (skin, clothing highlights)
+function smoothEraseWhite(imgEl, threshold=235) {
+  const W = imgEl.naturalWidth, H = imgEl.naturalHeight;
+  const cvs = document.createElement('canvas');
+  cvs.width = W; cvs.height = H;
+  const ctx = cvs.getContext('2d');
+  ctx.drawImage(imgEl, 0, 0);
+  const id = ctx.getImageData(0, 0, W, H);
+  const d = id.data;
+
+  // ── Step 1: mark "possibly background" pixels
+  // Background = very bright uniform color (low saturation, high brightness)
+  const isBgCandidate = new Uint8Array(W * H);
+  for (let i = 0; i < W * H; i++) {
+    const r=d[i*4], g=d[i*4+1], b=d[i*4+2], a=d[i*4+3];
+    if (a < 15) { isBgCandidate[i]=1; continue; }
+    const mx=Math.max(r,g,b), mn=Math.min(r,g,b);
+    const sat = mx>0 ? (mx-mn)/mx : 0;      // saturation 0–1
+    const bright = mx/255;
+    // High brightness + low saturation = white/grey background
+    isBgCandidate[i] = (bright > threshold/255 && sat < 0.15) ? 1 : 0;
+  }
+
+  // ── Step 2: flood-fill 8-dir from ALL edges only
+  const visited = new Uint8Array(W * H);
+  const queue = [];
+  for (let x=0;x<W;x++){
+    if(isBgCandidate[x]){visited[x]=1;queue.push(x);}
+    const b=(H-1)*W+x; if(isBgCandidate[b]){visited[b]=1;queue.push(b);}
+  }
+  for (let y=0;y<H;y++){
+    if(isBgCandidate[y*W]){visited[y*W]=1;queue.push(y*W);}
+    const r=y*W+W-1; if(isBgCandidate[r]){visited[r]=1;queue.push(r);}
+  }
+  let qi=0;
+  while(qi<queue.length){
+    const idx=queue[qi++];
+    const row=Math.floor(idx/W), col=idx%W;
+    for(const dv of [-1,1,-W,W,-W-1,-W+1,W-1,W+1]){
+      const ni=idx+dv; if(ni<0||ni>=W*H) continue;
+      const nr=Math.floor(ni/W);
+      if(Math.abs(nr-row)>1) continue;
+      if(!visited[ni]&&isBgCandidate[ni]){visited[ni]=1;queue.push(ni);}
+    }
+  }
+
+  // ── Step 3: hard erase flood-filled bg
+  for(let i=0;i<W*H;i++) if(visited[i]) d[i*4+3]=0;
+
+  // ── Step 4: distance-based alpha feathering from erased boundary
+  // Use BFS to compute exact pixel distance from erased region
+  const RADIUS = 6;
+  const dist = new Uint8Array(W * H).fill(255);
+  const dqueue = [];
+  for(let i=0;i<W*H;i++){ if(visited[i]){dist[i]=0;dqueue.push(i);} }
+  let dqi=0;
+  while(dqi<dqueue.length){
+    const idx=dqueue[dqi++];
+    const cd=dist[idx]; if(cd>=RADIUS) continue;
+    const row=Math.floor(idx/W), col=idx%W;
+    for(const dv of [-1,1,-W,W]){
+      const ni=idx+dv; if(ni<0||ni>=W*H) continue;
+      if(dv===-1&&col===0) continue;
+      if(dv===1&&col===W-1) continue;
+      if(dist[ni]>cd+1){dist[ni]=cd+1; dqueue.push(ni);}
+    }
+  }
+  // Smooth falloff using smoothstep
+  for(let i=0;i<W*H;i++){
+    if(visited[i]) continue;
+    const pd=dist[i];
+    if(pd<=RADIUS){
+      const t=pd/RADIUS;
+      const smooth=t*t*(3-2*t); // smoothstep: 0→0, 1→1
+      d[i*4+3]=Math.round(d[i*4+3]*smooth);
+    }
+  }
+
+  ctx.putImageData(id,0,0);
+  return cvs.toDataURL('image/png');
+}
+// ════════════════════════════════════════
+// BOOTH STATE
+// ════════════════════════════════════════
+let stream=null, timerSec=0, currentFilter='none';
+let capturedPhotos=[], isShooting=false, facingMode='user';
+let selectedFrame=null; // {src,img,w,h,slots:[{x,y,w,h}]}
+let idolImgs=[]; // array of {img} — one per pose, used cyclically per photo
+let idolMode='side', idolScale=0.8;
+let frameExtractedIdols=[]; // auto-extracted poses from frame PNG slots
+let camRAF=null; // requestAnimationFrame handle for live composite
+
+const video=document.getElementById('video');
+const camCanvas=document.getElementById('camCanvas');
+const camCtx=camCanvas.getContext('2d');
+const placeholder=document.getElementById('placeholder');
+const cntOvr=document.getElementById('cntOvr');
+const cntNum=document.getElementById('cntNum');
+const flashEl=document.getElementById('flashEl');
+const recDot=document.getElementById('recDot');
+const statusBar=document.getElementById('statusBar');
+const btnShoot=document.getElementById('btnShoot');
+const btnFlip=document.getElementById('btnFlip');
+const shotProg=document.getElementById('shotProg');
+const cameraWrap=document.getElementById('cameraWrap');
+
+function switchTab(id,el){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+}
+
+// ── Get photoCount — always from manual count selector
+function getPhotoCount() {
+  return parseInt(document.querySelector('[data-count].active')?.dataset.count || '4');
+}
+
+// Pending frame state (kept for designer frame export)
+let _pendingFrameEl = null;
+let _pendingOrigImg = null;
+
+function addFrameFile(file) {
+  const url = URL.createObjectURL(file);
+  const imgEl = new Image();
+  imgEl.onload = () => {
+    _pendingOrigImg = imgEl;
+
+    // Add frame thumb (placeholder, will update after apply)
+    const grid = document.getElementById('frameGrid');
+    const div = document.createElement('div');
+    div.className = 'frame-thumb';
+    div.dataset.frame = 'custom_'+Date.now();
+    const thumb = document.createElement('img');
+    thumb.src = url; // show original for now
+    div.appendChild(thumb);
+    const lbl = document.createElement('div');
+    lbl.className = 'ft-lbl';
+    lbl.textContent = file.name.replace(/\.[^.]+$/,'').slice(0,12);
+    div.appendChild(lbl);
+    div._frame = null; // will be set after applyErase
+    div.onclick = function(){if(this._frame)selectFrameEl(this);};
+    // Delete button
+    const delBtn=document.createElement('button');
+    delBtn.style.cssText='position:absolute;top:2px;left:2px;background:rgba(201,123,94,.9);color:white;font-size:.55rem;border:none;border-radius:3px;padding:1px 4px;cursor:pointer;z-index:5;display:none;';
+    delBtn.textContent='✕';
+    delBtn.onclick=(e)=>{e.stopPropagation();if(div._frame===selectedFrame){selectedFrame=null;document.querySelector('.frame-thumb.no-frame').classList.add('active');}div.remove();};
+    div.appendChild(delBtn);
+    div.addEventListener('mouseenter',()=>delBtn.style.display='block');
+    div.addEventListener('mouseleave',()=>delBtn.style.display='none');
+    grid.appendChild(div);
+    _pendingFrameEl = div;
+
+    // Show erase panel with preview
+    document.getElementById('erasePanel').style.display = 'block';
+    document.getElementById('eraseThreshold').value = 238;
+    document.getElementById('eraseThreshVal').textContent = '238';
+    updateErasePreview();
+  };
+  imgEl.src = url;
+}
+
+function updateErasePreview() {
+  if (!_pendingOrigImg) return;
+  const thresh = parseInt(document.getElementById('eraseThreshold').value);
+  const erasedUrl = smartEraseWhite(_pendingOrigImg, thresh);
+  const prev = document.getElementById('erasePreview');
+  // Show preview at small size
+  const maxW = 200;
+  const ratio = _pendingOrigImg.naturalHeight / _pendingOrigImg.naturalWidth;
+  prev.width = maxW;
+  prev.height = Math.round(maxW * ratio);
+  const pctx = prev.getContext('2d');
+  // Checkerboard bg
+  for(let y=0;y<prev.height;y+=8)for(let x=0;x<prev.width;x+=8){
+    pctx.fillStyle=((x/8+y/8)%2===0)?'#e8d5cc':'#faf6f0';
+    pctx.fillRect(x,y,8,8);
+  }
+  const previewImg = new Image();
+  previewImg.onload = () => pctx.drawImage(previewImg, 0, 0, prev.width, prev.height);
+  previewImg.src = erasedUrl;
+}
+
+
+// ── AUTO-EXTRACT person from frame PNG
+// Strategy: find the largest connected non-transparent region in the RIGHT half of the erased frame
+// (after white-erase, the person/idol should be visible as non-transparent pixels on the right)
+function extractPersonFromFrame(erasedImg) {
+  const W = erasedImg.naturalWidth, H = erasedImg.naturalHeight;
+  const cvs = document.createElement('canvas');
+  cvs.width = W; cvs.height = H;
+  const ctx = cvs.getContext('2d');
+  ctx.drawImage(erasedImg, 0, 0);
+  const imgData = ctx.getImageData(0, 0, W, H);
+  const d = imgData.data;
+
+  // Find bounding box of opaque pixels in the RIGHT half (person area)
+  const midX = Math.floor(W * 0.45); // person usually in right 55%
+  let minX=W, maxX=0, minY=H, maxY=0, found=false;
+
+  for (let y = 0; y < H; y++) {
+    for (let x = midX; x < W; x++) {
+      const a = d[(y*W+x)*4+3];
+      if (a > 30) { // opaque enough = person pixel
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x);
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
+        found = true;
+      }
+    }
+  }
+
+  if (!found) return null;
+
+  // Crop that region with small padding
+  const pad = Math.round(W * 0.01);
+  const cx = Math.max(0, minX-pad), cy = Math.max(0, minY-pad);
+  const cw = Math.min(W, maxX+pad) - cx;
+  const ch = Math.min(H, maxY+pad) - cy;
+
+  const cropCvs = document.createElement('canvas');
+  cropCvs.width = cw; cropCvs.height = ch;
+  const cropCtx = cropCvs.getContext('2d');
+  cropCtx.drawImage(erasedImg, cx, cy, cw, ch, 0, 0, cw, ch);
+
+  const resultImg = new Image();
+  resultImg.src = cropCvs.toDataURL('image/png');
+  return resultImg;
+}
+
+// ── Apply as frame overlay (border + idol stays in photo)
+function applyAsFrame() {
+  if (!_pendingOrigImg || !_pendingFrameEl) return;
+  const thresh = parseInt(document.getElementById('eraseThreshold').value);
+  const erasedUrl = smoothEraseWhite(_pendingOrigImg, thresh);
+  const erasedImg = new Image();
+  erasedImg.onload = () => {
+    _pendingFrameEl.querySelector('img').src = erasedUrl;
+    _pendingFrameEl._frame = {src:erasedUrl, img:erasedImg, w:erasedImg.naturalWidth, h:erasedImg.naturalHeight};
+    // Clear any extracted idol — frame mode doesn't use side-idol
+    frameExtractedIdols = [];
+    idolImgs = [];
+    // Camera aspect ratio = frame ratio
+    selectFrameEl(_pendingFrameEl);
+    setStatus('Frame siap dipakai sebagai overlay ✦');
+  };
+  erasedImg.src = erasedUrl;
+}
+
+// ── Apply as idol: detect all slots → extract each person → frameExtractedIdols[]
+function applyAsIdol() {
+  if (!_pendingOrigImg || !_pendingFrameEl) return;
+  const thresh = parseInt(document.getElementById('eraseThreshold').value);
+  // Use smooth erase for better cutout quality
+  const erasedUrl = smoothEraseWhite(_pendingOrigImg, thresh);
+  const erasedImg = new Image();
+  erasedImg.onload = () => {
+    _pendingFrameEl.querySelector('img').src = erasedUrl;
+    _pendingFrameEl._frame = null; // idol mode — no frame overlay
+
+    // Extract all slots from the frame
+    const slots = extractAllSlots(erasedImg);
+    if (slots && slots.length > 0) {
+      frameExtractedIdols = slots;
+      idolImgs = []; // clear manual uploads
+      idolMode = 'side';
+      idolScale = 0.92;
+      selectedFrame = null;
+      cameraWrap.classList.add('default-ratio');
+      cameraWrap.style.paddingBottom=''; cameraWrap.style.height='';
+      // Show thumbnails in idol grid
+      document.getElementById('idolHintPre').style.display='none';
+      document.getElementById('idolPosesGrid').style.display='grid';
+      document.getElementById('idolControls').style.display='flex';
+      const grid = document.getElementById('idolPosesGrid');
+      grid.innerHTML='';
+      slots.forEach((img,i) => addIdolPoseThumbnail(img,i));
+      document.querySelectorAll('.frame-thumb').forEach(t=>t.classList.remove('active'));
+      document.querySelector('.frame-thumb.no-frame').classList.add('active');
+      resizeCamCanvas();
+      setStatus(`${slots.length} pose idol diekstrak dari frame ✦`);
+    } else {
+      // Fallback: use whole erased image
+      frameExtractedIdols = [erasedImg];
+      idolImgs = [];
+      idolMode = 'side'; idolScale = 0.92;
+      selectedFrame = null;
+      cameraWrap.classList.add('default-ratio');
+      cameraWrap.style.paddingBottom=''; cameraWrap.style.height='';
+      document.querySelectorAll('.frame-thumb').forEach(t=>t.classList.remove('active'));
+      document.querySelector('.frame-thumb.no-frame').classList.add('active');
+      resizeCamCanvas();
+      setStatus('Idol diekstrak (1 pose) ✦');
+    }
+  };
+  erasedImg.src = erasedUrl;
+}
+
+// Detect and extract ALL person slots from a multi-slot frame
+// Returns array of cropped Image objects, one per slot
+function extractAllSlots(erasedImg) {
+  const W = erasedImg.naturalWidth, H = erasedImg.naturalHeight;
+  const cvs = document.createElement('canvas');
+  cvs.width=W; cvs.height=H;
+  const ctx = cvs.getContext('2d');
+  ctx.drawImage(erasedImg, 0, 0);
+  const d = ctx.getImageData(0,0,W,H).data;
+
+  // Scan row-by-row: find rows with opaque pixels
+  const rowHasOpaque = new Uint8Array(H);
+  for (let y=0; y<H; y++) {
+    for (let x=0; x<W; x++) {
+      if (d[(y*W+x)*4+3] > 40) { rowHasOpaque[y]=1; break; }
+    }
+  }
+
+  // Cluster opaque rows into slot bands (gap > 2% H = new slot)
+  const GAP = Math.ceil(H * 0.02);
+  const bands = [];
+  let inBand=false, bs=0;
+  for (let y=0; y<H; y++) {
+    if (!inBand && rowHasOpaque[y]) { inBand=true; bs=y; }
+    else if (inBand && !rowHasOpaque[y]) {
+      // Check if this is a real gap (consecutive empty rows > GAP)
+      let gapLen = 0;
+      for (let gy=y; gy<Math.min(H,y+GAP+10); gy++) { if(!rowHasOpaque[gy]) gapLen++; else break; }
+      if (gapLen >= GAP) { inBand=false; bands.push([bs,y-1]); }
+    }
+  }
+  if (inBand) bands.push([bs,H-1]);
+
+  // Filter tiny bands
+  const validBands = bands.filter(b => (b[1]-b[0]) > H*0.04);
+  if (validBands.length === 0) return null;
+
+  // Crop each band → separate Image
+  return validBands.map(([y0,y1]) => {
+    // Find horizontal extent
+    let xMin=W,xMax=0;
+    for (let y=y0; y<=y1; y++) {
+      for (let x=0; x<W; x++) {
+        if (d[(y*W+x)*4+3]>40){xMin=Math.min(xMin,x);xMax=Math.max(xMax,x);}
+      }
+    }
+    const pad=Math.round(W*0.005);
+    const cx=Math.max(0,xMin-pad), cy=Math.max(0,y0-pad);
+    const cw=Math.min(W,xMax+pad)-cx, ch=Math.min(H,y1+pad)-cy;
+    const cc=document.createElement('canvas');
+    cc.width=cw; cc.height=ch;
+    cc.getContext('2d').drawImage(erasedImg,cx,cy,cw,ch,0,0,cw,ch);
+    const img=new Image(); img.src=cc.toDataURL('image/png');
+    return img;
+  });
+}
+
+function selectFrameEl(el) {
+  document.querySelectorAll('.frame-thumb').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  if (el.dataset.frame==='none' || !el._frame) {
+    selectedFrame = null;
+    frameExtractedIdols = [];
+    cameraWrap.classList.add('default-ratio');
+    cameraWrap.style.paddingBottom=''; cameraWrap.style.height='';
+    document.getElementById('slotsInfo').style.display='none';
+  } else {
+    selectedFrame = el._frame;
+    // Frame is applied per-photo — camera ratio = frame's own aspect ratio
+    const ratio = selectedFrame.h / selectedFrame.w;
+    cameraWrap.classList.remove('default-ratio');
+    cameraWrap.style.height='0';
+    cameraWrap.style.paddingBottom=(ratio*100)+'%';
+    document.getElementById('slotsInfo').style.display='none';
+  }
+  resizeCamCanvas();
+}
+
+function resizeCamCanvas() {
+  // Set canvas to match the wrap's rendered size
+  requestAnimationFrame(() => {
+    const w = cameraWrap.offsetWidth;
+    const h = cameraWrap.offsetHeight;
+    if (w > 0 && h > 0) {
+      camCanvas.width = w;
+      camCanvas.height = h;
+    }
+  });
+}
+
+// ── Idol upload — no auto-erase, user handles bg removal manually
+document.getElementById('idolInput').addEventListener('change',function(e){
+  const files = Array.from(e.target.files);
+  if(!files.length) return;
+  frameExtractedIdols = [];
+  let loaded = 0;
+  files.forEach((file, fi) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      idolImgs.push(img);
+      addIdolPoseThumbnail(img, idolImgs.length - 1);
+      loaded++;
+      if(loaded === files.length) {
+        document.getElementById('idolHintPre').style.display='none';
+        document.getElementById('idolPosesGrid').style.display='grid';
+        document.getElementById('idolControls').style.display='flex';
+        setStatus(`${idolImgs.length} pose idol siap ✦`);
+      }
+    };
+    img.src = url;
+  });
+  this.value='';
+});
+
+
+function addIdolPoseThumbnail(img, idx) {
+  const grid = document.getElementById('idolPosesGrid');
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'position:relative;aspect-ratio:3/4;border-radius:6px;overflow:hidden;border:1px solid var(--soft);background:repeating-conic-gradient(#E8D5CC 0% 25%,#FAF6F0 0% 50%) 0 0/8px 8px;';
+  const im = document.createElement('img');
+  im.src = img.src;
+  im.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+  const badge = document.createElement('div');
+  badge.style.cssText = 'position:absolute;top:2px;left:2px;background:var(--deep);color:white;font-size:.5rem;border-radius:3px;padding:1px 4px;font-weight:600;';
+  badge.textContent = 'P'+(idx+1);
+  const del = document.createElement('div');
+  del.style.cssText = 'position:absolute;top:2px;right:2px;background:rgba(201,123,94,.9);color:white;font-size:.6rem;border-radius:3px;padding:1px 4px;cursor:pointer;';
+  del.textContent = '✕';
+  del.onclick = () => { idolImgs.splice(idx,1); renderIdolGrid(); };
+  wrap.appendChild(im); wrap.appendChild(badge); wrap.appendChild(del);
+  grid.appendChild(wrap);
+}
+
+function renderIdolGrid() {
+  const grid = document.getElementById('idolPosesGrid');
+  grid.innerHTML = '';
+  idolImgs.forEach((img,i) => addIdolPoseThumbnail(img,i));
+  if(idolImgs.length === 0) {
+    document.getElementById('idolPosesGrid').style.display='none';
+    document.getElementById('idolControls').style.display='none';
+    document.getElementById('idolHintPre').style.display='block';
+  }
+}
+
+function clearIdolPoses() {
+  idolImgs = [];
+  renderIdolGrid();
+  setStatus('Pose idol dihapus');
+}
+function setIdolMode(el){
+  document.querySelectorAll('.mode-pill').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active'); idolMode=el.dataset.mode;
+}
+document.getElementById('idolScale').addEventListener('input',function(){ idolScale=this.value/100; });
+
+// ── Settings
+function setTimer(el){document.querySelectorAll('[data-sec]').forEach(b=>b.classList.remove('active'));el.classList.add('active');timerSec=+el.dataset.sec;}
+function setCount(el){document.querySelectorAll('[data-count]').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderDots();}
+function setFilter(el){document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');currentFilter=el.dataset.filter;}
+const filterCSS={none:'',mono:'grayscale(1) contrast(1.05)',warm:'sepia(0.35) saturate(1.3) brightness(1.05)',cool:'hue-rotate(20deg) saturate(0.8) brightness(1.05)',vivid:'saturate(1.7) contrast(1.1)',vintage:'sepia(0.5) contrast(1.05) brightness(0.95)',soft:'saturate(0.85) brightness(1.08) contrast(0.95)',fade:'brightness(1.1) contrast(0.85) saturate(0.75)'};
+
+// ── Camera
+async function openCamera(){
+  try{
+    if(stream)stream.getTracks().forEach(t=>t.stop());
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode,width:{ideal:1280},height:{ideal:960}},audio:false});
+    video.srcObject=stream;
+    await new Promise(r=>{video.onloadedmetadata=r;});
+    placeholder.style.display='none';
+    btnShoot.disabled=false;
+    btnFlip.style.display='inline-block';
+    resizeCamCanvas();
+    startLiveComposite();
+    setStatus('Kamera aktif — siap foto! ✦');
+    renderDots();
+  }catch(err){setStatus('Gagal buka kamera');alert('Tidak bisa akses kamera: '+err.message);}
+}
+function flipCamera(){
+  facingMode=facingMode==='user'?'environment':'user';
+  openCamera();
+}
+
+// ── LIVE COMPOSITE: draw to camCanvas every animation frame
+function startLiveComposite(){
+  if(camRAF)cancelAnimationFrame(camRAF);
+  function loop(){
+    if(!stream){camRAF=null;return;}
+    // Make sure canvas matches wrap size
+    const wrapW = cameraWrap.offsetWidth;
+    const wrapH = cameraWrap.offsetHeight;
+    if(wrapW > 0 && wrapH > 0 && (camCanvas.width !== wrapW || camCanvas.height !== wrapH)){
+      camCanvas.width = wrapW;
+      camCanvas.height = wrapH;
+    }
+    drawComposite(camCtx, camCanvas.width, camCanvas.height, false, capturedPhotos.length);
+    camRAF=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// ── Composite: video + idol(right half) + frame PNG
+// includeVideo=true for capture, false for live preview overlay
+// photoIdx: which photo we're capturing (0-based) — picks correct idol pose
+function drawComposite(ctx, outW, outH, includeVideo=false, photoIdx=0) {
+  ctx.clearRect(0, 0, outW, outH);
+
+  // Pick active idol for this photo slot (cycle through poses if fewer poses than photos)
+  const poseList = idolImgs.length > 0 ? idolImgs : frameExtractedIdols;
+  const activeIdol = poseList.length > 0 ? poseList[photoIdx % poseList.length] : null;
+  const activeIdolMode = activeIdol ? idolMode : 'off';
+
+  // ── 1. Video layer (only for capture — for live preview, <video> is visible underneath)
+  if (includeVideo) {
+    const vw = video.videoWidth || 640, vh = video.videoHeight || 480;
+    // Video always fills full canvas — idol will overlay on top with transparent bg
+    drawVideoCoverCrop(ctx, video, vw, vh, 0, 0, outW, outH);
+    applyFilterCtx(ctx, outW, outH, currentFilter);
+  }
+
+  // ── 2. Idol: drawn on right side, idol has transparent bg (erased) so merges with video naturally
+  if (activeIdol && activeIdolMode === 'side') {
+    const iw = activeIdol.naturalWidth, ih = activeIdol.naturalHeight;
+    // Scale idol to fill full canvas height
+    const s = (outH * idolScale) / ih;
+    const diw = iw * s, dih = ih * s;
+    // Right-align, bottom-align
+    const dx = outW - diw;
+    const dy = outH - dih;
+    // Soft blend edge: draw idol freely — transparent bg means it merges naturally
+    ctx.save();
+    ctx.drawImage(activeIdol, dx, dy, diw, dih);
+    ctx.restore();
+  } else if (activeIdol && activeIdolMode === 'bg') {
+    const iw=activeIdol.naturalWidth, ih=activeIdol.naturalHeight;
+    const s = Math.max(outW/iw, outH/ih) * idolScale;
+    const diw=iw*s, dih=ih*s;
+    ctx.save();
+    ctx.globalAlpha = 0.32;
+    ctx.drawImage(activeIdol, (outW-diw)/2, (outH-dih)/2, diw, dih);
+    ctx.restore();
+  }
+
+  // ── 3. Frame PNG overlay
+  if (selectedFrame) {
+    ctx.drawImage(selectedFrame.img, 0, 0, outW, outH);
+  }
+}
+
+function drawVideoCoverCrop(ctx, videoEl, vw, vh, dx, dy, dw, dh) {
+  // Cover-crop video into dest rect (dx,dy,dw,dh)
+  const scaleX = dw / vw, scaleY = dh / vh;
+  const scale = Math.max(scaleX, scaleY);
+  const sw = dw / scale, sh = dh / scale;
+  const sx = (vw - sw) / 2, sy = (vh - sh) / 2;
+  ctx.save();
+  if (facingMode === 'user') {
+    // Mirror: flip around the dest rect center
+    ctx.translate(dx + dw, dy);
+    ctx.scale(-1, 1);
+    ctx.drawImage(videoEl, sx, sy, sw, sh, 0, 0, dw, dh);
+  } else {
+    ctx.drawImage(videoEl, sx, sy, sw, sh, dx, dy, dw, dh);
+  }
+  ctx.restore();
+}
+
+// (idol drawing is now inlined in drawComposite)
+
+// ── Pixel filter (applied to canvas pixel data)
+function applyFilterCtx(ctx, w, h, f) {
+  if (f === 'none') return;
+  const id = ctx.getImageData(0,0,w,h); const d = id.data;
+  for (let i = 0; i < d.length; i+=4) {
+    let r=d[i],g=d[i+1],b=d[i+2];
+    if(f==='mono'){const gr=0.299*r+0.587*g+0.114*b;d[i]=d[i+1]=d[i+2]=Math.min(255,gr*1.05);}
+    else if(f==='warm'){d[i]=Math.min(255,r*1.1+20);d[i+1]=Math.min(255,g);d[i+2]=Math.min(255,b*0.85);}
+    else if(f==='cool'){d[i]=Math.min(255,r*0.88);d[i+1]=Math.min(255,g*0.95);d[i+2]=Math.min(255,b*1.12);}
+    else if(f==='vivid'){const gr=0.299*r+0.587*g+0.114*b;d[i]=Math.min(255,gr+(r-gr)*1.7);d[i+1]=Math.min(255,gr+(g-gr)*1.7);d[i+2]=Math.min(255,gr+(b-gr)*1.7);}
+    else if(f==='vintage'){d[i]=Math.min(255,r*0.9+g*0.15+b*0.05+20);d[i+1]=Math.min(255,r*0.1+g*0.85+b*0.05);d[i+2]=Math.min(255,r*0.05+g*0.1+b*0.6);}
+    else if(f==='soft'){d[i]=Math.min(255,r*0.9+25);d[i+1]=Math.min(255,g*0.9+25);d[i+2]=Math.min(255,b*0.9+30);}
+    else if(f==='fade'){d[i]=Math.min(255,r*0.75+55);d[i+1]=Math.min(255,g*0.75+55);d[i+2]=Math.min(255,b*0.75+55);}
+  }
+  ctx.putImageData(id,0,0);
+}
+
+// ── Dots
+function renderDots(cur=-1){
+  const cnt = getPhotoCount();
+  shotProg.innerHTML='';
+  if(cnt<=1){shotProg.style.display='none';return;}
+  shotProg.style.display='flex';
+  for(let i=0;i<cnt;i++){
+    const dot=document.createElement('div');
+    dot.className='dot';
+    if(i<capturedPhotos.length)dot.classList.add('taken');
+    if(i===cur)dot.classList.add('active');
+    const idx=i;
+    dot.onclick=()=>{if(capturedPhotos[idx]!==undefined)retakeSlot(idx);};
+    shotProg.appendChild(dot);
+  }
+}
+function setStatus(m){statusBar.textContent=m;}
+
+// ── Shoot sequence
+async function startShooting(){
+  if(isShooting||!stream)return;
+  isShooting=true; capturedPhotos=[];
+  btnShoot.disabled=true; recDot.style.display='block';
+  document.getElementById('resultSec').classList.remove('show');
+  const cnt = getPhotoCount();
+  for(let i=0;i<cnt;i++){
+    renderDots(i);
+    setStatus(`Foto ${i+1}/${cnt}${timerSec>0?' — bersiap...':''}`);
+    if(timerSec>0)await countdown(timerSec); else await sleep(400);
+    await snapPhoto(i);
+    if(i<cnt-1)await sleep(600);
+  }
+  recDot.style.display='none'; isShooting=false; btnShoot.disabled=false;
+  setStatus('Sesi selesai! ✦'); renderDots();
+  buildStrip();
+}
+
+async function retakeSlot(idx){
+  if(isShooting||!stream)return;
+  isShooting=true; recDot.style.display='block';
+  setStatus(`Retake foto ${idx+1}...`); renderDots(idx);
+  if(timerSec>0)await countdown(timerSec); else await sleep(400);
+  await snapPhoto(idx, true);
+  recDot.style.display='none'; isShooting=false;
+  setStatus(`Foto ${idx+1} diambil ulang ✦`); renderDots();
+  buildStrip();
+}
+
+async function snapPhoto(idx, isRetake=false) {
+  // Each photo output = same size as the frame image (or video native if no frame)
+  const outW = selectedFrame ? selectedFrame.w : (video.videoWidth || 640);
+  const outH = selectedFrame ? selectedFrame.h : (video.videoHeight || 480);
+
+  const cvs = document.getElementById('hidden');
+  cvs.width = outW; cvs.height = outH;
+  const ctx = cvs.getContext('2d');
+
+  // Draw full composite (video + idol + frame) for capture
+  drawComposite(ctx, outW, outH, true, idx);
+
+  flashEl.classList.add('on'); setTimeout(()=>flashEl.classList.remove('on'),100);
+
+  const dataUrl = cvs.toDataURL('image/png');
+  if (isRetake) capturedPhotos[idx] = dataUrl;
+  else capturedPhotos.push(dataUrl);
+
+  if(shotProg.children[idx]){
+    shotProg.children[idx].classList.add('taken');
+    shotProg.children[idx].classList.remove('active');
+  }
+}
+
+function countdown(sec){
+  return new Promise(res=>{
+    cntOvr.style.display='flex'; let n=sec; cntNum.textContent=n; resetAnim(cntNum);
+    const iv=setInterval(()=>{n--;if(n<=0){clearInterval(iv);cntOvr.style.display='none';res();}else{cntNum.textContent=n;resetAnim(cntNum);}},1000);
+  });
+}
+function resetAnim(el){el.style.animation='none';void el.offsetHeight;el.style.animation='countPop 1s ease-out';}
+
+// ── Canvas rounded-rect helpers
+function roundRect(ctx,x,y,w,h,r,fill){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();
+  if(fill){ctx.fillStyle=fill;ctx.fill();}
+}
+function roundRectClip(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();ctx.clip();
+}
+function roundRectStroke(ctx,x,y,w,h,r,color,lw){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.stroke();
+}
+
+// ── Build final strip: Cortis/Photoism style
+function buildStrip(){
+  if(!capturedPhotos.length)return;
+  const imgs=capturedPhotos.map(s=>{const i=new Image();i.src=s;return i;});
+  Promise.all(imgs.map(i=>new Promise(r=>i.complete?r():(i.onload=r)))).then(()=>{
+    const rc=document.getElementById('result-canvas');
+
+    // Cortis strip proportions
+    const STRIP_W  = 560;
+    const BORDER   = 28;   // dark outer border
+    const PAD_TOP  = 36;   // extra top padding (for logo area)
+    const PAD_SIDE = 16;   // side padding inside border
+    const PAD_BOT  = 12;
+    const GAP      = 10;   // gap between photos
+    const FOOT     = 52;   // footer height
+    const CORNER   = 6;    // photo corner radius
+    const photoW   = STRIP_W - (BORDER+PAD_SIDE)*2;
+
+    const srcW=imgs[0].naturalWidth, srcH=imgs[0].naturalHeight;
+    const photoH = Math.round(photoW * (srcH / srcW));
+
+    rc.width  = STRIP_W;
+    rc.height = BORDER + PAD_TOP + photoH*imgs.length + GAP*(imgs.length-1) + PAD_BOT + FOOT + BORDER;
+
+    const ctx=rc.getContext('2d');
+
+    // ── Dark outer background
+    ctx.fillStyle='#28211E';
+    ctx.fillRect(0,0,rc.width,rc.height);
+
+    // ── Inner cream/white panel
+    const innerX=BORDER, innerY=BORDER;
+    const innerW=STRIP_W-BORDER*2, innerH=rc.height-BORDER*2;
+    roundRect(ctx,innerX,innerY,innerW,innerH,4,'#FAFAFA');
+
+    // ── Top header area — brand logo text
+    ctx.fillStyle='#28211E';
+    ctx.font='bold 11px "DM Sans",sans-serif';
+    ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.fillText('✦ SHIKACHIKA', BORDER+PAD_SIDE, BORDER+PAD_TOP*0.5);
+    ctx.font='9px "DM Sans",sans-serif';
+    ctx.fillStyle='#9B8075';
+    ctx.textAlign='right';
+    ctx.fillText('photoism', STRIP_W-BORDER-PAD_SIDE, BORDER+PAD_TOP*0.5);
+
+    // ── Registration marks (▲) on left border — one between each photo
+    ctx.fillStyle='#FAFAFA';
+    ctx.font='bold 8px sans-serif';
+    ctx.textAlign='center';
+    for(let i=0;i<=imgs.length;i++){
+      const markY = BORDER+PAD_TOP + i*(photoH+GAP) - (i>0?GAP/2:0);
+      if(i>0&&i<imgs.length) ctx.fillText('▲', BORDER/2, markY);
+    }
+
+    // ── Photos with rounded corners
+    imgs.forEach((img,i)=>{
+      const px = BORDER+PAD_SIDE;
+      const py = BORDER+PAD_TOP + i*(photoH+GAP);
+      // Clip rounded rect for photo
+      ctx.save();
+      roundRectClip(ctx, px, py, photoW, photoH, CORNER);
+      ctx.drawImage(img, px, py, photoW, photoH);
+      ctx.restore();
+      // Thin border around each photo
+      ctx.save();
+      roundRectStroke(ctx, px, py, photoW, photoH, CORNER, '#E0D8D0', 1);
+      ctx.restore();
+
+      // Side text (alternating CORTIS / PHOTOISM like original)
+      ctx.save();
+      ctx.translate(STRIP_W-BORDER+2, py+photoH/2);
+      ctx.rotate(Math.PI/2);
+      ctx.fillStyle='#FAFAFA';
+      ctx.font='bold 7px "DM Sans",sans-serif';
+      ctx.letterSpacing='0.15em';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(i%2===0?'SHIKACHIKA':'PHOTOISM', 0, 0);
+      ctx.restore();
+    });
+
+    // ── Footer bar
+    const fy = rc.height - BORDER - FOOT;
+    ctx.fillStyle='#28211E'; ctx.fillRect(BORDER, fy, innerW, FOOT);
+    ctx.fillStyle='#FAFAFA';
+    ctx.font='italic 14px Georgia,serif';
+    ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.fillText('© shikachika booth', BORDER+PAD_SIDE, fy+FOOT*0.5);
+    ctx.font='10px "DM Sans",sans-serif';
+    ctx.textAlign='right';
+    ctx.fillStyle='#C97B5E';
+    ctx.fillText('keep yourself alive ✦', STRIP_W-BORDER-PAD_SIDE, fy+FOOT*0.5);
+
+    const dl=document.getElementById('btnDl');
+    dl.href=rc.toDataURL('image/png');
+    dl.download='shikachika_booth.png';
+    buildRetakeGrid(imgs);
+    document.getElementById('resultSec').classList.add('show');
+    document.getElementById('resultSec').scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+}
+
+function buildRetakeGrid(imgs){
+  const grid=document.getElementById('retakeGrid'); grid.innerHTML='';
+  imgs.forEach((img,i)=>{
+    const wrap=document.createElement('div'); wrap.className='retake-thumb';
+    const im=document.createElement('img'); im.src=img.src;
+    const badge=document.createElement('div'); badge.className='retake-badge'; badge.textContent='retake';
+    wrap.appendChild(im); wrap.appendChild(badge);
+    wrap.onclick=()=>retakeSlot(i);
+    grid.appendChild(wrap);
+  });
+}
+function retakeAll(){document.getElementById('resultSec').classList.remove('show');capturedPhotos=[];renderDots();setStatus('Siap untuk sesi foto berikutnya ✦');}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+renderDots();
+window.addEventListener('resize',()=>{resizeCamCanvas();});
+
+// ════════════════════════════════════════
+// LIBRARY — Supabase cloud-backed (gallery + idol poses)
+// ════════════════════════════════════════
+
+function switchLibSubtab(name, el){
+  document.querySelectorAll('.lib-subtab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.lib-subtab-pane').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('libpane-'+name).classList.add('active');
+}
+
+function libLoading(msg='Memuat...'){
+  document.getElementById('galleryGrid').innerHTML=`<div class="lib-empty">${msg}</div>`;
+  document.getElementById('libGrid').innerHTML=`<div class="lib-empty">${msg}</div>`;
+}
+
+// ── Save photo strip to Gallery (Supabase)
+async function saveToGallery(){
+  const rc = document.getElementById('result-canvas');
+  if(!rc.width){ alert('Belum ada foto!'); return; }
+  setStatus('Menyimpan ke Gallery...');
+  try {
+    const dataUrl = rc.toDataURL('image/jpeg', 0.85);
+    const path = `gallery/${Date.now()}.jpg`;
+    const fileUrl = await sbUploadFile(dataUrl, path);
+    await sbInsert({
+      type: 'gallery',
+      label: 'Gallery',
+      date: new Date().toLocaleString('id-ID'),
+      file_url: fileUrl,
+      metadata: { storage_path: path }
+    });
+    setStatus('Foto tersimpan ke Gallery ✦');
+    const libBtn = document.getElementById('libTabBtn');
+    switchTab('library', libBtn);
+    await loadLibrary();
+    switchLibSubtab('gallery', document.getElementById('subtab-gallery-btn'));
+  } catch(err) {
+    console.error(err);
+    setStatus('Gagal simpan: ' + err.message);
+    alert('Gagal simpan ke cloud: ' + err.message);
+  }
+}
+
+// ── Save idol poses to Library (Supabase)
+async function saveCurrentIdolToLibrary(){
+  const poses = idolImgs.length > 0 ? idolImgs : frameExtractedIdols;
+  if(!poses.length){ alert('Belum ada pose idol!'); return; }
+  setStatus('Menyimpan pose ke Library...');
+  try {
+    // Build sprite sheet PNG
+    const pw = Math.max(...poses.map(p=>p.naturalWidth));
+    const GAP4 = 4;
+    const ph = poses.reduce((s,p)=>s+p.naturalHeight,0) + (poses.length-1)*GAP4;
+    const sc = document.createElement('canvas');
+    sc.width=pw; sc.height=ph;
+    const sctx=sc.getContext('2d');
+    let sy=0; const heights=[], widths=[];
+    poses.forEach(p=>{
+      sctx.drawImage(p,0,sy,p.naturalWidth,p.naturalHeight);
+      heights.push(p.naturalHeight); widths.push(p.naturalWidth);
+      sy+=p.naturalHeight+GAP4;
+    });
+    const dataUrl = sc.toDataURL('image/png');
+    const path = `idol/${Date.now()}.png`;
+    const fileUrl = await sbUploadFile(dataUrl, path);
+    await sbInsert({
+      type: 'idol_poses',
+      label: `🌟 ${poses.length} Poses`,
+      date: new Date().toLocaleString('id-ID'),
+      file_url: fileUrl,
+      metadata: { storage_path: path, poseCount: poses.length, poseHeights: heights, poseWidths: widths, poseGap: GAP4 }
+    });
+    setStatus(`${poses.length} pose tersimpan ke Library ✦`);
+    alert(`${poses.length} pose idol tersimpan ke cloud! ✦`);
+    await loadLibrary();
+    switchLibSubtab('idol', document.getElementById('subtab-idol-btn'));
+  } catch(err) {
+    console.error(err);
+    alert('Gagal simpan pose: ' + err.message);
+  }
+}
+
+// ── Load library from Supabase
+async function loadLibrary(){
+  libLoading('⏳ Memuat dari cloud...');
+  try {
+    const items = await sbFetch();
+    const galleryItems = items.filter(x=>x.type==='gallery');
+    const idolItems = items.filter(x=>x.type==='idol'||x.type==='idol_poses');
+
+    // Render Gallery
+    const gg = document.getElementById('galleryGrid');
+    gg.innerHTML = '';
+    if(!galleryItems.length){
+      gg.innerHTML='<div class="lib-empty">Belum ada foto tersimpan</div>';
+    } else {
+      galleryItems.forEach((item)=>{
+        const card = document.createElement('div'); card.className='gallery-card';
+        const img = document.createElement('img'); img.src=item.file_url; img.loading='lazy';
+        img.onclick=()=>{const w=window.open(); if(w) w.document.write('<body style="margin:0;background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;"><img src="'+item.file_url+'" style="max-width:100%;max-height:100vh;"></body>');};
+        const meta = document.createElement('div'); meta.className='gallery-card-meta'; meta.textContent=item.date;
+        const actions = document.createElement('div'); actions.className='gallery-card-actions';
+        const dlBtn = document.createElement('a'); dlBtn.className='gallery-action-btn';
+        dlBtn.href=item.file_url; dlBtn.download='shikachika_booth.jpg'; dlBtn.textContent='⬇ Download';
+        dlBtn.onclick=e=>e.stopPropagation();
+        const delBtn = document.createElement('button'); delBtn.className='gallery-action-btn del';
+        delBtn.textContent='✕ Hapus';
+        delBtn.onclick=async(e)=>{e.stopPropagation(); await deleteCloudItem(item); card.remove();};
+        actions.appendChild(dlBtn); actions.appendChild(delBtn);
+        card.appendChild(img); card.appendChild(meta); card.appendChild(actions);
+        gg.appendChild(card);
+      });
+    }
+
+    // Render Idol Poses
+    const ig = document.getElementById('libGrid');
+    ig.innerHTML = '';
+    if(!idolItems.length){
+      ig.innerHTML='<div class="lib-empty">Belum ada pose idol tersimpan</div>';
+    } else {
+      idolItems.forEach((item)=>{
+        const card = document.createElement('div'); card.className='lib-card';
+        const img = document.createElement('img'); img.src=item.file_url; img.loading='lazy';
+        const footer = document.createElement('div'); footer.className='lib-card-footer';
+        const date = document.createElement('span'); date.className='lib-card-date'; date.textContent=item.label||item.date;
+        const del = document.createElement('button'); del.className='lib-del'; del.textContent='✕';
+        del.onclick=async(e)=>{e.stopPropagation(); await deleteCloudItem(item); card.remove();};
+        footer.appendChild(date); footer.appendChild(del);
+        const actions = document.createElement('div'); actions.className='lib-card-actions';
+        const fotoBtn = document.createElement('button'); fotoBtn.className='lib-foto-btn';
+        fotoBtn.textContent='📸 Foto Bareng';
+        fotoBtn.onclick=(e)=>{e.stopPropagation(); useLibItemAsIdol(item.file_url, item.metadata||{});};
+        actions.appendChild(fotoBtn);
+        card.appendChild(img); card.appendChild(footer); card.appendChild(actions);
+        ig.appendChild(card);
+      });
+    }
+  } catch(err) {
+    console.error(err);
+    document.getElementById('galleryGrid').innerHTML='<div class="lib-empty">⚠ Gagal load: ' + err.message + '</div>';
+    document.getElementById('libGrid').innerHTML='';
+  }
+}
+
+async function deleteCloudItem(item){
+  if(!confirm('Hapus item ini?')) return;
+  try {
+    await sbDelete(item.id);
+    if(item.metadata && item.metadata.storage_path) {
+      await sbDeleteFile(item.metadata.storage_path);
+    }
+  } catch(err) { alert('Gagal hapus: ' + err.message); }
+}
+
+function useLibItemAsIdol(dataUrl, meta){
+  // meta = item.metadata from Supabase (contains poseCount, poseHeights, poseWidths, poseGap)
+  // type is stored at top level but we also store it in metadata for easy access
+  setStatus('Memproses foto dari library...');
+  const poseCount = meta && meta.poseCount;
+  const poseHeights = meta && meta.poseHeights;
+  const poseWidths = meta && meta.poseWidths;
+  const poseGap = (meta && meta.poseGap) || 4;
+
+  // If this is a sprite sheet (has poseCount metadata) — restore all poses directly
+  if(poseCount && poseHeights && poseWidths){
+    const origImg = new Image();
+    origImg.crossOrigin = 'anonymous';
+    origImg.onload = () => {
+      const poses = [];
+      let sy = 0;
+      for(let i = 0; i < poseCount; i++){
+        const ph = poseHeights[i], pw = poseWidths[i];
+        const pc = document.createElement('canvas');
+        pc.width = pw; pc.height = ph;
+        pc.getContext('2d').drawImage(origImg, 0, sy, pw, ph, 0, 0, pw, ph);
+        const pimg = new Image(); pimg.src = pc.toDataURL('image/png');
+        poses.push(pimg);
+        sy += ph + poseGap;
+      }
+      Promise.all(poses.map(p => new Promise(r => p.complete ? r() : (p.onload = r)))).then(() => {
+        frameExtractedIdols = [];
+        idolImgs = poses;
+        document.getElementById('idolHintPre').style.display = 'none';
+        document.getElementById('idolPosesGrid').style.display = 'grid';
+        document.getElementById('idolControls').style.display = 'flex';
+        renderIdolGrid();
+        idolMode = 'side'; idolScale = 0.88;
+        document.getElementById('idolScale').value = 88;
+        document.getElementById('idolScaleVal').textContent = '88%';
+        switchTab('booth', document.querySelectorAll('.tab-btn')[0]);
+        setStatus(`${poses.length} pose dari library siap — buka kamera & foto bareng! ✦`);
+      });
+    };
+    origImg.onerror = () => alert('Gagal load gambar dari cloud. Coba lagi.');
+    origImg.src = dataUrl;
+    return;
+  }
+
+  // Single idol image — load directly as-is (no bg removal, user already handled it)
+  const origImg = new Image();
+  origImg.crossOrigin = 'anonymous';
+  origImg.onload = () => {
+    frameExtractedIdols = []; idolImgs = [origImg];
+    document.getElementById('idolHintPre').style.display = 'none';
+    document.getElementById('idolPosesGrid').style.display = 'grid';
+    document.getElementById('idolControls').style.display = 'flex';
+    renderIdolGrid();
+    idolMode = 'side'; idolScale = 0.88;
+    document.getElementById('idolScale').value = 88;
+    document.getElementById('idolScaleVal').textContent = '88%';
+    switchTab('booth', document.querySelectorAll('.tab-btn')[0]);
+    setStatus('Idol dari library siap — buka kamera & foto bareng! ✦');
+  };
+  origImg.onerror = () => alert('Gagal load gambar dari cloud. Coba lagi.');
+  origImg.src = dataUrl;
+}
+
+
+// ════════════════════════════════════════
+// DESIGNER
+// ════════════════════════════════════════
+let dcvs,dctx,currentTool='select',drawColor='#2C1F1A';
+let isDrawingD=false; let objects=[],selectedObj=null,dragOffX=0,dragOffY=0;
+let bgLayerD=null; let currentStrokeD=null;
+const stickers=['🌸','💕','⭐','✨','🎀','🌷','💫','🦋','🍒','🌙','🎵','💖','🌈','🔮','🌺','❄️','🐾','🎠','🌟','💝'];
+
+window.addEventListener('load',()=>{
+  dcvs=document.getElementById('designCanvas');
+  dctx=dcvs.getContext('2d');
+  const sg=document.getElementById('stickerGrid');
+  stickers.forEach(s=>{const b=document.createElement('button');b.className='sticker-btn';b.textContent=s;b.onclick=()=>addEmoji(s);sg.appendChild(b);});
+  renderDesign();
+  dcvs.addEventListener('mousedown',onDD);
+  dcvs.addEventListener('mousemove',onDM);
+  dcvs.addEventListener('mouseup',onDU);
+  dcvs.addEventListener('mouseleave',onDU);
+  dcvs.addEventListener('touchstart',e=>{e.preventDefault();const t=e.touches[0];const r=dcvs.getBoundingClientRect();onDD({offsetX:t.clientX-r.left,offsetY:t.clientY-r.top,buttons:1});},{passive:false});
+  dcvs.addEventListener('touchmove',e=>{e.preventDefault();const t=e.touches[0];const r=dcvs.getBoundingClientRect();onDM({offsetX:t.clientX-r.left,offsetY:t.clientY-r.top});},{passive:false});
+  dcvs.addEventListener('touchend',onDU);
+  document.addEventListener('keydown',e=>{if((e.key==='Delete'||e.key==='Backspace')&&selectedObj&&document.activeElement.tagName!=='INPUT'){objects=objects.filter(o=>o!==selectedObj);selectedObj=null;renderDesign();}});
+});
+
+document.getElementById('bgImgInput').addEventListener('change',function(e){
+  const file=e.target.files[0];if(!file)return;
+  const url=URL.createObjectURL(file);
+  const img=new Image();
+  img.onload=()=>{
+    bgLayerD=img;
+    // Reset canvas to match image aspect ratio (capped at reasonable size)
+    const maxW=500;
+    const ratio=img.naturalHeight/img.naturalWidth;
+    dcvs.width=maxW;
+    dcvs.height=Math.round(maxW*ratio);
+    renderDesign();
+  };
+  img.src=url;
+  this.value='';
+});
+function setCanvasRatio(el,w,h){
+  document.querySelectorAll('[data-ratio]').forEach(b=>b.classList.remove('active'));el.classList.add('active');
+  dcvs.width=w;dcvs.height=h;renderDesign();
+}
+function setTool(t,el){currentTool=t;document.querySelectorAll('.tool-btn[id^=tool]').forEach(b=>b.classList.remove('active'));el.classList.add('active');dcvs.style.cursor=t==='select'?'default':t==='erase'?'cell':'crosshair';}
+function setColor(el){document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));el.classList.add('active');drawColor=el.dataset.color;}
+function setColorHex(v){document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));drawColor=v;}
+function addEmoji(e){const sz=parseInt(document.getElementById('brushSize').value)*3+20;objects.push({type:'emoji',x:dcvs.width/2-sz/2,y:dcvs.height/2-sz/2,w:sz,h:sz,text:e,size:sz});selectedObj=objects[objects.length-1];renderDesign();}
+function addTextSticker(){const t=document.getElementById('textInput').value.trim();if(!t)return;const sz=parseInt(document.getElementById('brushSize').value)+12;objects.push({type:'text',x:dcvs.width/2-60,y:dcvs.height/2,text:t,color:drawColor,size:sz,opacity:parseInt(document.getElementById('brushOpacity').value)/100});selectedObj=objects[objects.length-1];document.getElementById('textInput').value='';renderDesign();}
+
+function onDD(e){
+  const x=e.offsetX,y=e.offsetY;
+  if(currentTool==='select'){
+    selectedObj=null;
+    for(let i=objects.length-1;i>=0;i--){const o=objects[i];if(x>=o.x&&x<=o.x+(o.w||80)&&y>=o.y&&y<=o.y+(o.h||30)){selectedObj=o;dragOffX=x-o.x;dragOffY=y-o.y;break;}}
+    isDrawingD=!!selectedObj; renderDesign();
+  }else if(currentTool==='draw'||currentTool==='erase'){
+    isDrawingD=true;const sz=parseInt(document.getElementById('brushSize').value);const op=parseInt(document.getElementById('brushOpacity').value)/100;
+    currentStrokeD={type:'stroke',points:[{x,y}],color:currentTool==='erase'?'rgba(0,0,0,1)':drawColor,size:sz,opacity:op,erase:currentTool==='erase'};
+    objects.push(currentStrokeD);
+  }else if(currentTool==='rect'){
+    isDrawingD=true;const op=parseInt(document.getElementById('brushOpacity').value)/100;
+    currentStrokeD={type:'rect',x,y,w:0,h:0,color:drawColor,opacity:op,_sx:x,_sy:y};objects.push(currentStrokeD);
+  }
+}
+function onDM(e){
+  if(!isDrawingD)return;
+  const x=e.offsetX,y=e.offsetY;
+  if(currentTool==='select'&&selectedObj){selectedObj.x=x-dragOffX;selectedObj.y=y-dragOffY;renderDesign();return;}
+  if((currentTool==='draw'||currentTool==='erase')&&currentStrokeD){currentStrokeD.points.push({x,y});renderDesign();}
+  else if(currentTool==='rect'&&currentStrokeD){currentStrokeD.w=x-currentStrokeD._sx;currentStrokeD.h=y-currentStrokeD._sy;renderDesign();}
+}
+function onDU(){isDrawingD=false;currentStrokeD=null;}
+
+function renderDesign(){
+  if(!dctx)return;
+  dctx.clearRect(0,0,dcvs.width,dcvs.height);
+  const sz=12;
+  for(let y=0;y<dcvs.height;y+=sz)for(let x=0;x<dcvs.width;x+=sz){dctx.fillStyle=((x/sz+y/sz)%2===0)?'#e8d5cc':'#faf6f0';dctx.fillRect(x,y,sz,sz);}
+  if(bgLayerD){const s=Math.max(dcvs.width/bgLayerD.naturalWidth,dcvs.height/bgLayerD.naturalHeight);const bw=bgLayerD.naturalWidth*s,bh=bgLayerD.naturalHeight*s;dctx.drawImage(bgLayerD,(dcvs.width-bw)/2,(dcvs.height-bh)/2,bw,bh);}
+  objects.forEach(o=>{
+    dctx.save();dctx.globalAlpha=o.opacity??1;
+    if(o.type==='stroke'){if(o.erase)dctx.globalCompositeOperation='destination-out';dctx.strokeStyle=o.color;dctx.lineWidth=o.size;dctx.lineCap='round';dctx.lineJoin='round';dctx.beginPath();o.points.forEach((p,i)=>{if(i===0)dctx.moveTo(p.x,p.y);else dctx.lineTo(p.x,p.y);});dctx.stroke();}
+    else if(o.type==='rect'){dctx.fillStyle=o.color;dctx.fillRect(o.x,o.y,o.w,o.h);}
+    else if(o.type==='emoji'){dctx.font=`${o.size}px serif`;dctx.textBaseline='top';dctx.fillText(o.text,o.x,o.y);}
+    else if(o.type==='text'){dctx.font=`${o.size}px 'DM Sans',sans-serif`;dctx.fillStyle=o.color;dctx.textBaseline='middle';const mw=dctx.measureText(o.text).width;o.w=mw+8;o.h=o.size+6;dctx.fillText(o.text,o.x,o.y+o.size/2);}
+    dctx.restore();
+  });
+  if(selectedObj){dctx.save();dctx.strokeStyle='#C97B5E';dctx.lineWidth=1.5;dctx.setLineDash([4,3]);dctx.strokeRect(selectedObj.x-2,selectedObj.y-2,(selectedObj.w||80)+4,(selectedObj.h||30)+4);dctx.restore();}
+}
+
+function getExportCanvas(){
+  const ec=document.createElement('canvas');ec.width=dcvs.width;ec.height=dcvs.height;
+  const ectx=ec.getContext('2d');
+  if(bgLayerD){const s=Math.max(ec.width/bgLayerD.naturalWidth,ec.height/bgLayerD.naturalHeight);const bw=bgLayerD.naturalWidth*s,bh=bgLayerD.naturalHeight*s;ectx.drawImage(bgLayerD,(ec.width-bw)/2,(ec.height-bh)/2,bw,bh);}
+  objects.forEach(o=>{
+    ectx.save();ectx.globalAlpha=o.opacity??1;
+    if(o.type==='stroke'){if(o.erase)ectx.globalCompositeOperation='destination-out';ectx.strokeStyle=o.color;ectx.lineWidth=o.size;ectx.lineCap='round';ectx.lineJoin='round';ectx.beginPath();o.points.forEach((p,i)=>{if(i===0)ectx.moveTo(p.x,p.y);else ectx.lineTo(p.x,p.y);});ectx.stroke();}
+    else if(o.type==='rect'){ectx.fillStyle=o.color;ectx.fillRect(o.x,o.y,o.w,o.h);}
+    else if(o.type==='emoji'){ectx.font=`${o.size}px serif`;ectx.textBaseline='top';ectx.fillText(o.text,o.x,o.y);}
+    else if(o.type==='text'){ectx.font=`${o.size}px 'DM Sans',sans-serif`;ectx.fillStyle=o.color;ectx.textBaseline='middle';ectx.fillText(o.text,o.x,o.y+o.size/2);}
+    ectx.restore();
+  });
+  return ec;
+}
+function exportDesignAsIdol(){
+  // Get canvas as-is, ADD as new pose (no auto bg erase)
+  const ec=getExportCanvas();
+  const url=ec.toDataURL('image/png');
+  const img=new Image();
+  img.onload=()=>{
+    frameExtractedIdols=[];
+    if(idolImgs.length >= 4){
+      if(!confirm(`Sudah ada ${idolImgs.length} pose. Replace pose terakhir?`))return;
+      idolImgs[idolImgs.length-1]=img;
+    } else {
+      idolImgs.push(img);
+    }
+    document.getElementById('idolHintPre').style.display='none';
+    document.getElementById('idolPosesGrid').style.display='grid';
+    document.getElementById('idolControls').style.display='flex';
+    renderIdolGrid();
+    idolMode='side'; idolScale=0.92;
+    document.getElementById('idolScale').value=92;
+    document.getElementById('idolScaleVal').textContent='92%';
+    switchTab('booth',document.querySelectorAll('.tab-btn')[0]);
+    setStatus(`Pose ${idolImgs.length}/4 ditambah! ✦`);
+  };
+  img.src=url;
+}
+function exportDesignAsFrame(){
+  const ec=getExportCanvas();
+  const url=ec.toDataURL('image/png');
+  const img=new Image();
+  img.onload=()=>{
+    const slots=detectSlots(img,235);
+    const grid=document.getElementById('frameGrid');
+    const div=document.createElement('div');div.className='frame-thumb';div.dataset.frame='des_'+Date.now();
+    const thumb=document.createElement('img');thumb.src=url;div.appendChild(thumb);
+    const lbl=document.createElement('div');lbl.className='ft-lbl';lbl.textContent=(slots?slots.length+'×':'')+'My Design';div.appendChild(lbl);
+    div._frame={src:url,img,w:img.naturalWidth,h:img.naturalHeight,slots};
+    div.onclick=function(){selectFrameEl(this);};
+    const delBtn2=document.createElement('button');
+    delBtn2.style.cssText='position:absolute;top:2px;left:2px;background:rgba(201,123,94,.9);color:white;font-size:.55rem;border:none;border-radius:3px;padding:1px 4px;cursor:pointer;z-index:5;display:none;';
+    delBtn2.textContent='✕';
+    delBtn2.onclick=(e)=>{e.stopPropagation();if(div._frame===selectedFrame){selectedFrame=null;document.querySelector('.frame-thumb.no-frame').classList.add('active');}div.remove();};
+    div.appendChild(delBtn2);
+    div.addEventListener('mouseenter',()=>delBtn2.style.display='block');
+    div.addEventListener('mouseleave',()=>delBtn2.style.display='none');
+    grid.appendChild(div);
+    selectFrameEl(div);
+    switchTab('booth',document.querySelectorAll('.tab-btn')[0]);
+  };
+  img.src=url;
+}
+function downloadDesign(){const ec=getExportCanvas();const a=document.createElement('a');a.download='shikachika_frame.png';a.href=ec.toDataURL('image/png');a.click();}
+function clearDesignCanvas(){if(!confirm('Reset canvas?'))return;objects=[];bgLayerD=null;selectedObj=null;renderDesign();}
+</script>
+</body>
+</html>
