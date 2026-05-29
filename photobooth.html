@@ -146,6 +146,39 @@ canvas#hidden{display:none;}
 .lib-foto-btn:hover{background:var(--deep);}
 .lib-save-note{font-size:.62rem;color:var(--mid);text-align:center;padding:.3rem .7rem .5rem;}
 
+/* per-pose card */
+.pose-card{display:flex;gap:8px;align-items:flex-start;background:var(--cream);border-radius:9px;padding:7px 8px;border:2px solid transparent;cursor:pointer;transition:all .15s;}
+.pose-card:hover{border-color:var(--rose);}
+.pose-card.active{border-color:var(--accent);background:var(--blush);}
+.pose-thumb{width:52px;flex-shrink:0;aspect-ratio:3/4;border-radius:5px;overflow:hidden;background:repeating-conic-gradient(#E8D5CC 0% 25%,#FAF6F0 0% 50%) 0 0/7px 7px;position:relative;}
+.pose-thumb img{width:100%;height:100%;object-fit:cover;}
+.pose-badge{position:absolute;top:2px;left:2px;background:var(--deep);color:white;font-size:.48rem;border-radius:2px;padding:1px 4px;font-weight:700;}
+.pose-controls{flex:1;display:flex;flex-direction:column;gap:4px;}
+.pose-slider-row{display:flex;align-items:center;gap:5px;}
+.pose-slider-row label{font-size:.56rem;color:var(--mid);white-space:nowrap;width:24px;}
+.pose-slider-row input[type=range]{flex:1;height:3px;}
+.pose-slider-row span{font-size:.56rem;color:var(--mid);min-width:28px;text-align:right;}
+.pose-del{background:none;border:none;cursor:pointer;color:var(--mid);font-size:.7rem;padding:2px;line-height:1;align-self:flex-start;}
+
+/* live edit bar under camera */
+.live-edit-bar{display:none;padding:.6rem 1rem;background:var(--deep);gap:.5rem;justify-content:center;align-items:center;flex-wrap:wrap;}
+.live-edit-bar.show{display:flex;}
+.leb-label{font-size:.6rem;color:rgba(255,255,255,.6);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
+.leb-slider{flex:1;min-width:80px;max-width:140px;accent-color:var(--accent);}
+.leb-val{font-size:.6rem;color:white;min-width:30px;text-align:right;}
+.leb-sep{color:rgba(255,255,255,.2);font-size:.8rem;}
+
+/* frame upload panel */
+.frame-upload-panel{display:flex;flex-direction:column;gap:8px;}
+.frame-thumbs{display:flex;gap:6px;flex-wrap:wrap;}
+.frame-item{position:relative;width:52px;aspect-ratio:2/3;border-radius:6px;overflow:hidden;border:2px solid transparent;cursor:pointer;background:var(--cream);transition:all .15s;}
+.frame-item img{width:100%;height:100%;object-fit:cover;}
+.frame-item.active{border-color:var(--accent);}
+.frame-item:hover{border-color:var(--rose);}
+.frame-item .fi-del{position:absolute;top:1px;right:1px;background:rgba(201,123,94,.9);color:white;border:none;border-radius:2px;font-size:.55rem;padding:1px 3px;cursor:pointer;display:none;}
+.frame-item:hover .fi-del{display:block;}
+.frame-none{display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.5rem;color:var(--mid);background:repeating-conic-gradient(#E8D5CC 0% 25%,#FAF6F0 0% 50%) 0 0/8px 8px;}
+
 /* library sub-tabs */
 .lib-subtab-bar{display:flex;border-bottom:1px solid var(--soft);margin-bottom:1.2rem;gap:0;}
 .lib-subtab{flex:1;padding:.6rem .5rem;font-size:.72rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);background:transparent;border:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;font-family:'DM Sans',sans-serif;}
@@ -187,14 +220,8 @@ canvas#hidden{display:none;}
         <p class="hint" id="idolHintPre">Upload foto idol (PNG transparan) → foto bareng!<br>Hapus bg dulu di tool lain ya.</p>
         <input type="file" id="idolInput" style="display:none;" accept="image/*" multiple>
         <button class="upload-btn" onclick="document.getElementById('idolInput').click()">⊕ Upload foto idol</button>
-        <!-- Idol poses grid -->
-        <div id="idolPosesGrid" style="display:none;display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:4px;"></div>
+        <div id="idolPosesGrid" style="display:none;flex-direction:column;gap:8px;margin-top:4px;"></div>
         <div id="idolControls" style="display:none;flex-direction:column;gap:6px;margin-top:4px;">
-          <div class="slider-row" style="display:flex;align-items:center;gap:7px;">
-            <label style="font-size:.62rem;color:var(--mid);white-space:nowrap;">Ukuran</label>
-            <input type="range" id="idolScale" min="30" max="130" value="80" style="flex:1;" oninput="idolScale=this.value/100;document.getElementById('idolScaleVal').textContent=this.value+'%'">
-            <span id="idolScaleVal" style="font-size:.62rem;color:var(--mid);min-width:28px;">80%</span>
-          </div>
           <button class="upload-btn" style="font-size:.62rem;padding:.38rem;background:var(--accent);border-color:var(--accent);color:white;" onclick="saveCurrentIdolToLibrary()">🗂 Simpan Pose ke Library</button>
           <button class="upload-btn" style="font-size:.62rem;padding:.38rem;" onclick="clearIdolPoses()">✕ Hapus semua pose</button>
         </div>
@@ -248,6 +275,22 @@ canvas#hidden{display:none;}
         <div class="rec" id="recDot"></div>
       </div>
       <div class="shot-prog" id="shotProg" style="display:none;"></div>
+      <!-- Live pose edit bar — shows when a pose is selected -->
+      <div class="live-edit-bar" id="liveEditBar">
+        <span class="leb-label" id="lebPoseLabel">P1</span>
+        <span class="leb-sep">|</span>
+        <span class="leb-label">Size</span>
+        <input class="leb-slider" type="range" id="lebSize" min="20" max="150" value="88" oninput="updateLiveEdit()">
+        <span class="leb-val" id="lebSizeVal">88%</span>
+        <span class="leb-sep">|</span>
+        <span class="leb-label">←→</span>
+        <input class="leb-slider" type="range" id="lebX" min="-60" max="60" value="0" oninput="updateLiveEdit()">
+        <span class="leb-val" id="lebXVal">+0%</span>
+        <span class="leb-sep">|</span>
+        <span class="leb-label">↑↓</span>
+        <input class="leb-slider" type="range" id="lebY" min="-60" max="60" value="0" oninput="updateLiveEdit()">
+        <span class="leb-val" id="lebYVal">+0%</span>
+      </div>
       <div class="cam-ctrl">
         <button class="btn-sec" onclick="openCamera()">◎ Buka Kamera</button>
         <button class="btn-main" id="btnShoot" onclick="startShooting()" disabled>✦ Mulai Foto</button>
@@ -266,6 +309,18 @@ canvas#hidden{display:none;}
           <a class="btn-dl" id="btnDl" download="shikachika_booth.png">⬇ Download</a>
           <button class="btn-dl" onclick="saveToGallery()" style="background:var(--accent);">🖼 Simpan ke Gallery</button>
           <button class="btn-retake-all" onclick="retakeAll()">↺ Reset Semua</button>
+          <!-- Frame border picker — upload reference strip, auto-extract border -->
+          <div style="margin-top:4px;border-top:1px solid var(--soft);padding-top:8px;">
+            <p style="font-size:.62rem;color:var(--mid);margin-bottom:6px;font-weight:500;">🖼 Frame Border Strip:</p>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;" id="stripFrameThumbs">
+              <div id="stripFrameNone" onclick="applyStripFrame(null,this)" style="width:36px;aspect-ratio:1/2.2;border-radius:5px;border:2px solid var(--accent);background:repeating-conic-gradient(#E8D5CC 0% 25%,#FAF6F0 0% 50%) 0 0/7px 7px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.6rem;color:var(--mid);">✕</div>
+            </div>
+            <label style="display:flex;align-items:center;justify-content:center;gap:5px;width:100%;padding:.38rem;border:1.5px dashed var(--rose);border-radius:8px;font-size:.65rem;color:var(--accent);cursor:pointer;font-weight:500;letter-spacing:.04em;">
+              ⊕ Upload foto strip referensi
+              <input type="file" id="stripFrameInput" style="display:none;" accept="image/*" multiple onchange="handleStripFrameUpload(this)">
+            </label>
+            <p style="font-size:.55rem;color:var(--mid);margin-top:4px;text-align:center;">Upload foto strip (mis. Cortis) → border-nya diambil otomatis</p>
+          </div>
           <div style="margin-top:3px;">
             <p style="font-size:.63rem;color:var(--mid);margin-bottom:5px;letter-spacing:.05em;">Klik foto untuk retake satu:</p>
             <div class="retake-grid" id="retakeGrid"></div>
@@ -657,11 +712,13 @@ function smoothEraseWhite(imgEl, threshold=235) {
 // ════════════════════════════════════════
 let stream=null, timerSec=0, currentFilter='none';
 let capturedPhotos=[], isShooting=false, facingMode='user';
-let selectedFrame=null; // {src,img,w,h,slots:[{x,y,w,h}]}
-let idolImgs=[]; // array of {img} — one per pose, used cyclically per photo
-let idolMode='side', idolScale=0.8;
-let frameExtractedIdols=[]; // auto-extracted poses from frame PNG slots
-let camRAF=null; // requestAnimationFrame handle for live composite
+let selectedFrame=null;
+let selectedStripFrame=null;
+let idolImgs=[];
+let idolMode='side', idolScale=0.88; // idolScale kept for legacy code paths
+let frameExtractedIdols=[];
+let camRAF=null;
+
 
 const video=document.getElementById('video');
 const camCanvas=document.getElementById('camCanvas');
@@ -835,34 +892,24 @@ function applyAsIdol() {
     // Extract all slots from the frame
     const slots = extractAllSlots(erasedImg);
     if (slots && slots.length > 0) {
-      frameExtractedIdols = slots;
-      idolImgs = []; // clear manual uploads
+      frameExtractedIdols = [];
+      idolImgs = slots.map(img=>({img, scale:0.92, offsetX:0, offsetY:0}));
       idolMode = 'side';
-      idolScale = 0.92;
-      selectedFrame = null;
       cameraWrap.classList.add('default-ratio');
       cameraWrap.style.paddingBottom=''; cameraWrap.style.height='';
-      // Show thumbnails in idol grid
-      document.getElementById('idolHintPre').style.display='none';
-      document.getElementById('idolPosesGrid').style.display='grid';
-      document.getElementById('idolControls').style.display='flex';
-      const grid = document.getElementById('idolPosesGrid');
-      grid.innerHTML='';
-      slots.forEach((img,i) => addIdolPoseThumbnail(img,i));
-      document.querySelectorAll('.frame-thumb').forEach(t=>t.classList.remove('active'));
-      document.querySelector('.frame-thumb.no-frame').classList.add('active');
+      renderIdolGrid();
+      selectPose(0);
       resizeCamCanvas();
-      setStatus(`${slots.length} pose idol diekstrak dari frame ✦`);
+      setStatus(`${slots.length} pose idol diekstrak ✦`);
     } else {
       // Fallback: use whole erased image
-      frameExtractedIdols = [erasedImg];
-      idolImgs = [];
-      idolMode = 'side'; idolScale = 0.92;
-      selectedFrame = null;
+      frameExtractedIdols = [];
+      idolImgs = [{img: erasedImg, scale:0.92, offsetX:0, offsetY:0}];
+      idolMode = 'side';
       cameraWrap.classList.add('default-ratio');
       cameraWrap.style.paddingBottom=''; cameraWrap.style.height='';
-      document.querySelectorAll('.frame-thumb').forEach(t=>t.classList.remove('active'));
-      document.querySelector('.frame-thumb.no-frame').classList.add('active');
+      renderIdolGrid();
+      selectPose(0);
       resizeCamCanvas();
       setStatus('Idol diekstrak (1 pose) ✦');
     }
@@ -966,17 +1013,16 @@ document.getElementById('idolInput').addEventListener('change',function(e){
   if(!files.length) return;
   frameExtractedIdols = [];
   let loaded = 0;
-  files.forEach((file, fi) => {
+  const startIdx = idolImgs.length;
+  files.forEach((file) => {
     const url = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => {
-      idolImgs.push(img);
-      addIdolPoseThumbnail(img, idolImgs.length - 1);
+      idolImgs.push({img, scale:0.88, offsetX:0, offsetY:0});
       loaded++;
       if(loaded === files.length) {
-        document.getElementById('idolHintPre').style.display='none';
-        document.getElementById('idolPosesGrid').style.display='grid';
-        document.getElementById('idolControls').style.display='flex';
+        renderIdolGrid();
+        selectPose(startIdx); // auto-select first newly uploaded
         setStatus(`${idolImgs.length} pose idol siap ✦`);
       }
     };
@@ -986,32 +1032,88 @@ document.getElementById('idolInput').addEventListener('change',function(e){
 });
 
 
-function addIdolPoseThumbnail(img, idx) {
+// activePoseIdx: which pose is currently being edited live
+let activePoseIdx = 0;
+
+function selectPose(idx) {
+  activePoseIdx = idx;
+  // Highlight active card
+  document.querySelectorAll('.pose-card').forEach((c,i)=>c.classList.toggle('active',i===idx));
+  const pose = idolImgs[idx];
+  if(!pose) return;
+  // Update live edit bar
+  const bar = document.getElementById('liveEditBar');
+  bar.classList.add('show');
+  document.getElementById('lebPoseLabel').textContent = 'P'+(idx+1);
+  const sSlider = document.getElementById('lebSize');
+  sSlider.value = Math.round(pose.scale*100);
+  document.getElementById('lebSizeVal').textContent = sSlider.value+'%';
+  const xSlider = document.getElementById('lebX');
+  xSlider.value = Math.round(pose.offsetX*100);
+  document.getElementById('lebXVal').textContent = (pose.offsetX>=0?'+':'')+Math.round(pose.offsetX*100)+'%';
+  const ySlider = document.getElementById('lebY');
+  ySlider.value = Math.round(pose.offsetY*100);
+  document.getElementById('lebYVal').textContent = (pose.offsetY>=0?'+':'')+Math.round(pose.offsetY*100)+'%';
+}
+
+function updateLiveEdit() {
+  const pose = idolImgs[activePoseIdx];
+  if(!pose) return;
+  const s = parseInt(document.getElementById('lebSize').value);
+  const x = parseInt(document.getElementById('lebX').value);
+  const y = parseInt(document.getElementById('lebY').value);
+  pose.scale = s/100;
+  pose.offsetX = x/100;
+  pose.offsetY = y/100;
+  document.getElementById('lebSizeVal').textContent = s+'%';
+  document.getElementById('lebXVal').textContent = (x>=0?'+':'')+x+'%';
+  document.getElementById('lebYVal').textContent = (y>=0?'+':'')+y+'%';
+  // Also update sidebar card values
+  renderIdolGrid();
+  selectPose(activePoseIdx);
+}
+
+function addIdolPoseThumbnail(poseObj, idx) {
   const grid = document.getElementById('idolPosesGrid');
-  const wrap = document.createElement('div');
-  wrap.style.cssText = 'position:relative;aspect-ratio:3/4;border-radius:6px;overflow:hidden;border:1px solid var(--soft);background:repeating-conic-gradient(#E8D5CC 0% 25%,#FAF6F0 0% 50%) 0 0/8px 8px;';
-  const im = document.createElement('img');
-  im.src = img.src;
-  im.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-  const badge = document.createElement('div');
-  badge.style.cssText = 'position:absolute;top:2px;left:2px;background:var(--deep);color:white;font-size:.5rem;border-radius:3px;padding:1px 4px;font-weight:600;';
-  badge.textContent = 'P'+(idx+1);
-  const del = document.createElement('div');
-  del.style.cssText = 'position:absolute;top:2px;right:2px;background:rgba(201,123,94,.9);color:white;font-size:.6rem;border-radius:3px;padding:1px 4px;cursor:pointer;';
-  del.textContent = '✕';
-  del.onclick = () => { idolImgs.splice(idx,1); renderIdolGrid(); };
-  wrap.appendChild(im); wrap.appendChild(badge); wrap.appendChild(del);
-  grid.appendChild(wrap);
+  const card = document.createElement('div');
+  card.className = 'pose-card' + (idx===activePoseIdx?' active':'');
+  card.onclick = () => selectPose(idx);
+
+  // Thumb
+  const thumb = document.createElement('div'); thumb.className='pose-thumb';
+  const im = document.createElement('img'); im.src=poseObj.img.src; im.style.cssText='width:100%;height:100%;object-fit:cover;';
+  const badge = document.createElement('div'); badge.className='pose-badge'; badge.textContent='P'+(idx+1);
+  thumb.appendChild(im); thumb.appendChild(badge);
+
+  // Info text (compact)
+  const info = document.createElement('div'); info.style.cssText='flex:1;display:flex;flex-direction:column;gap:2px;justify-content:center;';
+  const infoSize = document.createElement('span'); infoSize.style.cssText='font-size:.58rem;color:var(--mid);';
+  infoSize.textContent = `Size ${Math.round(poseObj.scale*100)}%  ←→ ${(poseObj.offsetX>=0?'+':'')+Math.round(poseObj.offsetX*100)}%  ↑↓ ${(poseObj.offsetY>=0?'+':'')+Math.round(poseObj.offsetY*100)}%`;
+  const editHint = document.createElement('span'); editHint.style.cssText='font-size:.52rem;color:var(--accent);';
+  editHint.textContent = idx===activePoseIdx ? '✦ editing di kamera' : 'klik untuk edit';
+  info.appendChild(infoSize); info.appendChild(editHint);
+
+  // Delete button
+  const del = document.createElement('button'); del.className='pose-del'; del.textContent='✕';
+  del.onclick=(e)=>{ e.stopPropagation(); idolImgs.splice(idx,1); if(activePoseIdx>=idolImgs.length) activePoseIdx=Math.max(0,idolImgs.length-1); renderIdolGrid(); if(idolImgs.length>0) selectPose(activePoseIdx); else document.getElementById('liveEditBar').classList.remove('show'); };
+
+  card.appendChild(thumb); card.appendChild(info); card.appendChild(del);
+  grid.appendChild(card);
 }
 
 function renderIdolGrid() {
   const grid = document.getElementById('idolPosesGrid');
   grid.innerHTML = '';
-  idolImgs.forEach((img,i) => addIdolPoseThumbnail(img,i));
+  idolImgs.forEach((pose,i) => addIdolPoseThumbnail(pose,i));
   if(idolImgs.length === 0) {
-    document.getElementById('idolPosesGrid').style.display='none';
+    grid.style.display='none';
     document.getElementById('idolControls').style.display='none';
     document.getElementById('idolHintPre').style.display='block';
+    document.getElementById('liveEditBar').classList.remove('show');
+  } else {
+    grid.style.display='flex';
+    document.getElementById('idolControls').style.display='flex';
+    document.getElementById('idolHintPre').style.display='none';
   }
 }
 
@@ -1024,8 +1126,126 @@ function setIdolMode(el){
   document.querySelectorAll('.mode-pill').forEach(b=>b.classList.remove('active'));
   el.classList.add('active'); idolMode=el.dataset.mode;
 }
-document.getElementById('idolScale').addEventListener('input',function(){ idolScale=this.value/100; });
 
+// ── Strip frame: upload reference photo, auto-extract border (erase bright content, keep dark frame)
+function handleStripFrameUpload(input) {
+  Array.from(input.files).forEach(file => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      // Extract just the dark border by erasing bright/light pixels
+      const borderUrl = extractBorderOnly(img);
+      const borderImg = new Image();
+      borderImg.onload = () => {
+        const frameObj = {img: borderImg, url: borderUrl, name: file.name.replace(/\.[^.]+$/,'').slice(0,12)};
+        addStripFrameThumb(frameObj);
+      };
+      borderImg.src = borderUrl;
+    };
+    img.src = url;
+  });
+  input.value = '';
+}
+
+// Extract border frame from a photostrip:
+// Keep the outer border/header/footer solid, erase only the inner photo slots
+// Strategy: flood-fill from the CENTER of each detected photo slot area → erase those
+function extractBorderOnly(imgEl) {
+  const W = imgEl.naturalWidth, H = imgEl.naturalHeight;
+  const cvs = document.createElement('canvas');
+  cvs.width = W; cvs.height = H;
+  const ctx = cvs.getContext('2d');
+  ctx.drawImage(imgEl, 0, 0);
+  const id = ctx.getImageData(0, 0, W, H);
+  const d = id.data;
+
+  // Build brightness map
+  const lum = new Float32Array(W * H);
+  for (let i = 0; i < W * H; i++) {
+    lum[i] = 0.299*d[i*4] + 0.587*d[i*4+1] + 0.114*d[i*4+2];
+  }
+
+  // Find the main interior region: largest bright connected area NOT touching edges
+  // Seed from center of image inward
+  const visited = new Uint8Array(W * H);
+  const toErase = new Uint8Array(W * H);
+  const BRIGHT = 160; // photo slot pixels are bright (white bg or photo content)
+
+  // Find bright pixel rows in center column — these are photo slots
+  const cx = Math.floor(W / 2);
+  const seeds = [];
+  for (let y = Math.floor(H * 0.05); y < Math.floor(H * 0.95); y++) {
+    if (lum[y * W + cx] > BRIGHT) seeds.push(y * W + cx);
+  }
+
+  // BFS flood fill from seeds, only through bright pixels, NOT reaching edges
+  const queue = [...new Set(seeds)];
+  queue.forEach(i => { visited[i] = 1; toErase[i] = 1; });
+  let qi = 0;
+  while (qi < queue.length) {
+    const idx = queue[qi++];
+    const row = Math.floor(idx / W), col = idx % W;
+    for (const dv of [-1, 1, -W, W]) {
+      const ni = idx + dv;
+      if (ni < 0 || ni >= W * H) continue;
+      if (dv === -1 && col === 0) continue;
+      if (dv === 1 && col === W - 1) continue;
+      if (!visited[ni] && lum[ni] > BRIGHT) {
+        visited[ni] = 1;
+        toErase[ni] = 1;
+        queue.push(ni);
+      }
+    }
+  }
+
+  // Erase the detected photo slot pixels (make transparent)
+  // Keep smooth edges with feathering
+  for (let i = 0; i < W * H; i++) {
+    if (toErase[i]) {
+      d[i*4+3] = 0;
+    }
+  }
+
+  // Feather edges: pixels adjacent to erased area get reduced alpha
+  for (let y = 1; y < H-1; y++) {
+    for (let x = 1; x < W-1; x++) {
+      const i = y*W+x;
+      if (toErase[i]) continue;
+      if (d[i*4+3] === 0) continue;
+      const neighbors = [toErase[(y-1)*W+x], toErase[(y+1)*W+x], toErase[y*W+x-1], toErase[y*W+x+1]];
+      const erasedCount = neighbors.filter(Boolean).length;
+      if (erasedCount > 0) d[i*4+3] = Math.round(d[i*4+3] * (1 - erasedCount*0.25));
+    }
+  }
+
+  ctx.putImageData(id, 0, 0);
+  return cvs.toDataURL('image/png');
+}
+
+function addStripFrameThumb(frameObj) {
+  const container = document.getElementById('stripFrameThumbs');
+  const item = document.createElement('div');
+  item.style.cssText = 'position:relative;width:36px;aspect-ratio:1/2.2;border-radius:5px;border:2px solid transparent;cursor:pointer;overflow:hidden;transition:all .15s;background:#eee;';
+  const im = document.createElement('img'); im.src=frameObj.url; im.style.cssText='width:100%;height:100%;object-fit:cover;';
+  const del = document.createElement('button');
+  del.style.cssText = 'position:absolute;top:1px;right:1px;background:rgba(201,123,94,.9);color:white;border:none;border-radius:2px;font-size:.5rem;padding:1px 3px;cursor:pointer;display:none;';
+  del.textContent='✕';
+  del.onclick=(e)=>{e.stopPropagation(); if(selectedStripFrame&&selectedStripFrame.img===frameObj.img){applyStripFrame(null,document.getElementById('stripFrameNone'));} item.remove();};
+  item.appendChild(im); item.appendChild(del);
+  item.onmouseenter=()=>del.style.display='block';
+  item.onmouseleave=()=>del.style.display='none';
+  item.onclick=()=>applyStripFrame(frameObj, item);
+  container.appendChild(item);
+  applyStripFrame(frameObj, item);
+}
+
+function applyStripFrame(frameObj, el) {
+  selectedStripFrame = frameObj;
+  document.getElementById('stripFrameThumbs').querySelectorAll('div').forEach(d=>d.style.borderColor='transparent');
+  document.getElementById('stripFrameNone').style.borderColor = frameObj ? 'transparent' : 'var(--accent)';
+  if(el && frameObj) el.style.borderColor = 'var(--accent)';
+  if(capturedPhotos.length) buildStrip();
+}
 // ── Settings
 function setTimer(el){document.querySelectorAll('[data-sec]').forEach(b=>b.classList.remove('active'));el.classList.add('active');timerSec=+el.dataset.sec;}
 function setCount(el){document.querySelectorAll('[data-count]').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderDots();}
@@ -1058,14 +1278,16 @@ function startLiveComposite(){
   if(camRAF)cancelAnimationFrame(camRAF);
   function loop(){
     if(!stream){camRAF=null;return;}
-    // Make sure canvas matches wrap size
     const wrapW = cameraWrap.offsetWidth;
     const wrapH = cameraWrap.offsetHeight;
     if(wrapW > 0 && wrapH > 0 && (camCanvas.width !== wrapW || camCanvas.height !== wrapH)){
       camCanvas.width = wrapW;
       camCanvas.height = wrapH;
     }
-    drawComposite(camCtx, camCanvas.width, camCanvas.height, false, capturedPhotos.length);
+    // Idle/edit mode → show clicked pose (activePoseIdx)
+    // Shooting mode → cycle through poses matching photo index (0→P1, 1→P2, …)
+    const previewIdx = isShooting ? capturedPhotos.length : activePoseIdx;
+    drawComposite(camCtx, camCanvas.width, camCanvas.height, false, previewIdx);
     camRAF=requestAnimationFrame(loop);
   }
   loop();
@@ -1073,50 +1295,54 @@ function startLiveComposite(){
 
 // ── Composite: video + idol(right half) + frame PNG
 // includeVideo=true for capture, false for live preview overlay
-// photoIdx: which photo we're capturing (0-based) — picks correct idol pose
+// photoIdx: which photo index (0-based) — picks correct idol pose
 function drawComposite(ctx, outW, outH, includeVideo=false, photoIdx=0) {
   ctx.clearRect(0, 0, outW, outH);
 
-  // Pick active idol for this photo slot (cycle through poses if fewer poses than photos)
-  const poseList = idolImgs.length > 0 ? idolImgs : frameExtractedIdols;
-  const activeIdol = poseList.length > 0 ? poseList[photoIdx % poseList.length] : null;
-  const activeIdolMode = activeIdol ? idolMode : 'off';
+  const poseList = idolImgs.length > 0 ? idolImgs : frameExtractedIdols.map(img=>({img,scale:0.88,offsetX:0,offsetY:0}));
+  // Always use photoIdx to pick pose — for live preview this is activePoseIdx (idle) or next shot idx (shooting)
+  const poseIdx = photoIdx % Math.max(poseList.length, 1);
+  const activePose = poseList.length > 0 ? poseList[poseIdx] : null;
+  const activeIdol = activePose ? activePose.img : null;
 
-  // ── 1. Video layer (only for capture — for live preview, <video> is visible underneath)
+  // ── 1. Video layer
   if (includeVideo) {
     const vw = video.videoWidth || 640, vh = video.videoHeight || 480;
-    // Video always fills full canvas — idol will overlay on top with transparent bg
     drawVideoCoverCrop(ctx, video, vw, vh, 0, 0, outW, outH);
     applyFilterCtx(ctx, outW, outH, currentFilter);
   }
 
-  // ── 2. Idol: drawn on right side, idol has transparent bg (erased) so merges with video naturally
-  if (activeIdol && activeIdolMode === 'side') {
+  // ── 2. Idol with per-pose scale + offset
+  if (activeIdol && idolMode === 'side') {
     const iw = activeIdol.naturalWidth, ih = activeIdol.naturalHeight;
-    // Scale idol to fill full canvas height
-    const s = (outH * idolScale) / ih;
+    const s = (outH * activePose.scale) / ih;
     const diw = iw * s, dih = ih * s;
-    // Right-align, bottom-align
-    const dx = outW - diw;
-    const dy = outH - dih;
-    // Soft blend edge: draw idol freely — transparent bg means it merges naturally
+    const dx = outW - diw + activePose.offsetX * outW;
+    const dy = outH - dih + activePose.offsetY * outH;
     ctx.save();
     ctx.drawImage(activeIdol, dx, dy, diw, dih);
+    // Show subtle highlight box in live preview (not capture)
+    if (!includeVideo && !isShooting && document.getElementById('liveEditBar').classList.contains('show')) {
+      ctx.strokeStyle = 'rgba(201,123,94,0.7)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5,4]);
+      ctx.strokeRect(dx, dy, diw, dih);
+      ctx.setLineDash([]);
+    }
     ctx.restore();
-  } else if (activeIdol && activeIdolMode === 'bg') {
+  } else if (activeIdol && idolMode === 'bg') {
     const iw=activeIdol.naturalWidth, ih=activeIdol.naturalHeight;
-    const s = Math.max(outW/iw, outH/ih) * idolScale;
+    const s = Math.max(outW/iw, outH/ih) * activePose.scale;
     const diw=iw*s, dih=ih*s;
+    const dx = (outW-diw)/2 + activePose.offsetX*outW;
+    const dy = (outH-dih)/2 + activePose.offsetY*outH;
     ctx.save();
     ctx.globalAlpha = 0.32;
-    ctx.drawImage(activeIdol, (outW-diw)/2, (outH-dih)/2, diw, dih);
+    ctx.drawImage(activeIdol, dx, dy, diw, dih);
     ctx.restore();
   }
 
-  // ── 3. Frame PNG overlay
-  if (selectedFrame) {
-    ctx.drawImage(selectedFrame.img, 0, 0, outW, outH);
-  }
+  // ── 3. Frame PNG overlay removed — frame applied post-strip in buildStrip
 }
 
 function drawVideoCoverCrop(ctx, videoEl, vw, vh, dx, dy, dw, dh) {
@@ -1248,101 +1474,96 @@ function roundRectStroke(ctx,x,y,w,h,r,color,lw){
   ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.stroke();
 }
 
-// ── Build final strip: Cortis/Photoism style
+// ── Build final strip: clean white + thin black border + shikachika branding
 function buildStrip(){
   if(!capturedPhotos.length)return;
   const imgs=capturedPhotos.map(s=>{const i=new Image();i.src=s;return i;});
   Promise.all(imgs.map(i=>new Promise(r=>i.complete?r():(i.onload=r)))).then(()=>{
     const rc=document.getElementById('result-canvas');
 
-    // Cortis strip proportions
-    const STRIP_W  = 560;
-    const BORDER   = 28;   // dark outer border
-    const PAD_TOP  = 36;   // extra top padding (for logo area)
-    const PAD_SIDE = 16;   // side padding inside border
-    const PAD_BOT  = 12;
-    const GAP      = 10;   // gap between photos
-    const FOOT     = 52;   // footer height
-    const CORNER   = 6;    // photo corner radius
-    const photoW   = STRIP_W - (BORDER+PAD_SIDE)*2;
+    // Real photobox strip: narrow ~400px, photos landscape 3:2, tight padding
+    const STRIP_W  = 400;
+    const PAD_H    = 16;   // top/bottom padding
+    const PAD_SIDE = 10;   // left/right padding
+    const GAP      = 6;    // gap between photos
+    const FOOT     = 32;   // footer height
+    const BORDER_W = 3;    // outer border
+    const photoW   = STRIP_W - PAD_SIDE*2;
 
-    const srcW=imgs[0].naturalWidth, srcH=imgs[0].naturalHeight;
-    const photoH = Math.round(photoW * (srcH / srcW));
+    // Force 3:2 landscape ratio per photo (real photobox style)
+    const photoH = Math.round(photoW * 2 / 3);
 
     rc.width  = STRIP_W;
-    rc.height = BORDER + PAD_TOP + photoH*imgs.length + GAP*(imgs.length-1) + PAD_BOT + FOOT + BORDER;
+    // Height: photos + padding. Footer only drawn when no frame selected.
+    rc.height = PAD_H + photoH*imgs.length + GAP*(imgs.length-1) + PAD_H*0.5 + FOOT;
 
     const ctx=rc.getContext('2d');
 
-    // ── Dark outer background
-    ctx.fillStyle='#28211E';
+    // White background always
+    ctx.fillStyle='#FFFFFF';
     ctx.fillRect(0,0,rc.width,rc.height);
 
-    // ── Inner cream/white panel
-    const innerX=BORDER, innerY=BORDER;
-    const innerW=STRIP_W-BORDER*2, innerH=rc.height-BORDER*2;
-    roundRect(ctx,innerX,innerY,innerW,innerH,4,'#FAFAFA');
-
-    // ── Top header area — brand logo text
-    ctx.fillStyle='#28211E';
-    ctx.font='bold 11px "DM Sans",sans-serif';
-    ctx.textAlign='left'; ctx.textBaseline='middle';
-    ctx.fillText('✦ SHIKACHIKA', BORDER+PAD_SIDE, BORDER+PAD_TOP*0.5);
-    ctx.font='9px "DM Sans",sans-serif';
-    ctx.fillStyle='#9B8075';
-    ctx.textAlign='right';
-    ctx.fillText('photoism', STRIP_W-BORDER-PAD_SIDE, BORDER+PAD_TOP*0.5);
-
-    // ── Registration marks (▲) on left border — one between each photo
-    ctx.fillStyle='#FAFAFA';
-    ctx.font='bold 8px sans-serif';
-    ctx.textAlign='center';
-    for(let i=0;i<=imgs.length;i++){
-      const markY = BORDER+PAD_TOP + i*(photoH+GAP) - (i>0?GAP/2:0);
-      if(i>0&&i<imgs.length) ctx.fillText('▲', BORDER/2, markY);
+    // Only draw default black border when no frame selected
+    if (!selectedStripFrame) {
+      ctx.strokeStyle='#1a1a1a';
+      ctx.lineWidth=BORDER_W;
+      ctx.strokeRect(BORDER_W/2, BORDER_W/2, rc.width-BORDER_W, rc.height-BORDER_W);
     }
 
-    // ── Photos with rounded corners
+    // Photos — each cover-cropped to 3:2
     imgs.forEach((img,i)=>{
-      const px = BORDER+PAD_SIDE;
-      const py = BORDER+PAD_TOP + i*(photoH+GAP);
-      // Clip rounded rect for photo
+      const px = PAD_SIDE;
+      const py = PAD_H + i*(photoH+GAP);
+
+      const srcW=img.naturalWidth, srcH=img.naturalHeight;
+      const scaleX=photoW/srcW, scaleY=photoH/srcH;
+      const scale=Math.max(scaleX,scaleY);
+      const sw=photoW/scale, sh=photoH/scale;
+      const sx=(srcW-sw)/2, sy=(srcH-sh)/2;
+
       ctx.save();
-      roundRectClip(ctx, px, py, photoW, photoH, CORNER);
-      ctx.drawImage(img, px, py, photoW, photoH);
-      ctx.restore();
-      // Thin border around each photo
-      ctx.save();
-      roundRectStroke(ctx, px, py, photoW, photoH, CORNER, '#E0D8D0', 1);
+      ctx.beginPath();
+      ctx.rect(px,py,photoW,photoH);
+      ctx.clip();
+      ctx.drawImage(img, sx, sy, sw, sh, px, py, photoW, photoH);
       ctx.restore();
 
-      // Side text (alternating CORTIS / PHOTOISM like original)
-      ctx.save();
-      ctx.translate(STRIP_W-BORDER+2, py+photoH/2);
-      ctx.rotate(Math.PI/2);
-      ctx.fillStyle='#FAFAFA';
-      ctx.font='bold 7px "DM Sans",sans-serif';
-      ctx.letterSpacing='0.15em';
-      ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText(i%2===0?'SHIKACHIKA':'PHOTOISM', 0, 0);
-      ctx.restore();
+      // Thin border around each photo (only when no frame)
+      if (!selectedStripFrame) {
+        ctx.strokeStyle='#ccc';
+        ctx.lineWidth=1;
+        ctx.strokeRect(px, py, photoW, photoH);
+      }
     });
 
-    // ── Footer bar
-    const fy = rc.height - BORDER - FOOT;
-    ctx.fillStyle='#28211E'; ctx.fillRect(BORDER, fy, innerW, FOOT);
-    ctx.fillStyle='#FAFAFA';
-    ctx.font='italic 14px Georgia,serif';
-    ctx.textAlign='left'; ctx.textBaseline='middle';
-    ctx.fillText('© shikachika booth', BORDER+PAD_SIDE, fy+FOOT*0.5);
-    ctx.font='10px "DM Sans",sans-serif';
-    ctx.textAlign='right';
-    ctx.fillStyle='#C97B5E';
-    ctx.fillText('keep yourself alive ✦', STRIP_W-BORDER-PAD_SIDE, fy+FOOT*0.5);
-
     const dl=document.getElementById('btnDl');
+
+    if (selectedStripFrame) {
+      // Draw frame fully opaque, stretched to fill strip exactly
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.drawImage(selectedStripFrame.img, 0, 0, rc.width, rc.height);
+    } else {
+      // Default footer
+      const fy = rc.height - FOOT;
+      ctx.fillStyle='#FFFFFF';
+      ctx.fillRect(0, fy, rc.width, FOOT);
+      ctx.strokeStyle='#1a1a1a';
+      ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(PAD_SIDE, fy+1); ctx.lineTo(rc.width-PAD_SIDE, fy+1); ctx.stroke();
+      ctx.fillStyle='#1a1a1a';
+      ctx.font='bold 9px "DM Sans",sans-serif';
+      ctx.textAlign='left'; ctx.textBaseline='middle';
+      ctx.fillText('shikachika booth', PAD_SIDE, fy+FOOT*0.5);
+      ctx.font='8px "DM Sans",sans-serif';
+      ctx.fillStyle='#999';
+      ctx.textAlign='right';
+      ctx.fillText('✦ capture your moment', rc.width-PAD_SIDE, fy+FOOT*0.5);
+    }
+
     dl.href=rc.toDataURL('image/png');
     dl.download='shikachika_booth.png';
+
     buildRetakeGrid(imgs);
     document.getElementById('resultSec').classList.add('show');
     document.getElementById('resultSec').scrollIntoView({behavior:'smooth',block:'nearest'});
@@ -1411,22 +1632,22 @@ async function saveToGallery(){
 
 // ── Save idol poses to Library (Supabase)
 async function saveCurrentIdolToLibrary(){
-  const poses = idolImgs.length > 0 ? idolImgs : frameExtractedIdols;
+  const poses = idolImgs.length > 0 ? idolImgs : frameExtractedIdols.map(img=>({img,scale:0.88,offsetX:0,offsetY:0}));
   if(!poses.length){ alert('Belum ada pose idol!'); return; }
   setStatus('Menyimpan pose ke Library...');
   try {
-    // Build sprite sheet PNG
-    const pw = Math.max(...poses.map(p=>p.naturalWidth));
+    const pw = Math.max(...poses.map(p=>p.img.naturalWidth));
     const GAP4 = 4;
-    const ph = poses.reduce((s,p)=>s+p.naturalHeight,0) + (poses.length-1)*GAP4;
+    const ph = poses.reduce((s,p)=>s+p.img.naturalHeight,0) + (poses.length-1)*GAP4;
     const sc = document.createElement('canvas');
     sc.width=pw; sc.height=ph;
     const sctx=sc.getContext('2d');
-    let sy=0; const heights=[], widths=[];
+    let sy=0; const heights=[], widths=[], scales=[], offsetsX=[], offsetsY=[];
     poses.forEach(p=>{
-      sctx.drawImage(p,0,sy,p.naturalWidth,p.naturalHeight);
-      heights.push(p.naturalHeight); widths.push(p.naturalWidth);
-      sy+=p.naturalHeight+GAP4;
+      sctx.drawImage(p.img,0,sy,p.img.naturalWidth,p.img.naturalHeight);
+      heights.push(p.img.naturalHeight); widths.push(p.img.naturalWidth);
+      scales.push(p.scale); offsetsX.push(p.offsetX); offsetsY.push(p.offsetY);
+      sy+=p.img.naturalHeight+GAP4;
     });
     const dataUrl = sc.toDataURL('image/png');
     const path = `idol/${Date.now()}.png`;
@@ -1436,7 +1657,7 @@ async function saveCurrentIdolToLibrary(){
       label: `🌟 ${poses.length} Poses`,
       date: new Date().toLocaleString('id-ID'),
       file_url: fileUrl,
-      metadata: { storage_path: path, poseCount: poses.length, poseHeights: heights, poseWidths: widths, poseGap: GAP4 }
+      metadata: { storage_path: path, poseCount: poses.length, poseHeights: heights, poseWidths: widths, poseGap: GAP4, scales, offsetsX, offsetsY }
     });
     setStatus(`${poses.length} pose tersimpan ke Library ✦`);
     alert(`${poses.length} pose idol tersimpan ke cloud! ✦`);
@@ -1521,15 +1742,15 @@ async function deleteCloudItem(item){
 }
 
 function useLibItemAsIdol(dataUrl, meta){
-  // meta = item.metadata from Supabase (contains poseCount, poseHeights, poseWidths, poseGap)
-  // type is stored at top level but we also store it in metadata for easy access
   setStatus('Memproses foto dari library...');
   const poseCount = meta && meta.poseCount;
   const poseHeights = meta && meta.poseHeights;
   const poseWidths = meta && meta.poseWidths;
   const poseGap = (meta && meta.poseGap) || 4;
+  const scales = (meta && meta.scales) || null;
+  const offsetsX = (meta && meta.offsetsX) || null;
+  const offsetsY = (meta && meta.offsetsY) || null;
 
-  // If this is a sprite sheet (has poseCount metadata) — restore all poses directly
   if(poseCount && poseHeights && poseWidths){
     const origImg = new Image();
     origImg.crossOrigin = 'anonymous';
@@ -1542,44 +1763,40 @@ function useLibItemAsIdol(dataUrl, meta){
         pc.width = pw; pc.height = ph;
         pc.getContext('2d').drawImage(origImg, 0, sy, pw, ph, 0, 0, pw, ph);
         const pimg = new Image(); pimg.src = pc.toDataURL('image/png');
-        poses.push(pimg);
+        poses.push({
+          img: pimg,
+          scale: scales ? scales[i] : 0.88,
+          offsetX: offsetsX ? offsetsX[i] : 0,
+          offsetY: offsetsY ? offsetsY[i] : 0
+        });
         sy += ph + poseGap;
       }
-      Promise.all(poses.map(p => new Promise(r => p.complete ? r() : (p.onload = r)))).then(() => {
+      Promise.all(poses.map(p => new Promise(r => p.img.complete ? r() : (p.img.onload = r)))).then(() => {
         frameExtractedIdols = [];
         idolImgs = poses;
-        document.getElementById('idolHintPre').style.display = 'none';
-        document.getElementById('idolPosesGrid').style.display = 'grid';
-        document.getElementById('idolControls').style.display = 'flex';
         renderIdolGrid();
-        idolMode = 'side'; idolScale = 0.88;
-        document.getElementById('idolScale').value = 88;
-        document.getElementById('idolScaleVal').textContent = '88%';
+        idolMode = 'side';
         switchTab('booth', document.querySelectorAll('.tab-btn')[0]);
         setStatus(`${poses.length} pose dari library siap — buka kamera & foto bareng! ✦`);
       });
     };
-    origImg.onerror = () => alert('Gagal load gambar dari cloud. Coba lagi.');
+    origImg.onerror = () => alert('Gagal load gambar dari cloud.');
     origImg.src = dataUrl;
     return;
   }
 
-  // Single idol image — load directly as-is (no bg removal, user already handled it)
+  // Single idol image
   const origImg = new Image();
   origImg.crossOrigin = 'anonymous';
   origImg.onload = () => {
-    frameExtractedIdols = []; idolImgs = [origImg];
-    document.getElementById('idolHintPre').style.display = 'none';
-    document.getElementById('idolPosesGrid').style.display = 'grid';
-    document.getElementById('idolControls').style.display = 'flex';
+    frameExtractedIdols = [];
+    idolImgs = [{img: origImg, scale: 0.88, offsetX: 0, offsetY: 0}];
     renderIdolGrid();
-    idolMode = 'side'; idolScale = 0.88;
-    document.getElementById('idolScale').value = 88;
-    document.getElementById('idolScaleVal').textContent = '88%';
+    idolMode = 'side';
     switchTab('booth', document.querySelectorAll('.tab-btn')[0]);
     setStatus('Idol dari library siap — buka kamera & foto bareng! ✦');
   };
-  origImg.onerror = () => alert('Gagal load gambar dari cloud. Coba lagi.');
+  origImg.onerror = () => alert('Gagal load gambar dari cloud.');
   origImg.src = dataUrl;
 }
 
@@ -1690,25 +1907,20 @@ function getExportCanvas(){
   return ec;
 }
 function exportDesignAsIdol(){
-  // Get canvas as-is, ADD as new pose (no auto bg erase)
   const ec=getExportCanvas();
   const url=ec.toDataURL('image/png');
   const img=new Image();
   img.onload=()=>{
     frameExtractedIdols=[];
+    const pose = {img, scale:0.92, offsetX:0, offsetY:0};
     if(idolImgs.length >= 4){
       if(!confirm(`Sudah ada ${idolImgs.length} pose. Replace pose terakhir?`))return;
-      idolImgs[idolImgs.length-1]=img;
+      idolImgs[idolImgs.length-1]=pose;
     } else {
-      idolImgs.push(img);
+      idolImgs.push(pose);
     }
-    document.getElementById('idolHintPre').style.display='none';
-    document.getElementById('idolPosesGrid').style.display='grid';
-    document.getElementById('idolControls').style.display='flex';
     renderIdolGrid();
-    idolMode='side'; idolScale=0.92;
-    document.getElementById('idolScale').value=92;
-    document.getElementById('idolScaleVal').textContent='92%';
+    idolMode='side';
     switchTab('booth',document.querySelectorAll('.tab-btn')[0]);
     setStatus(`Pose ${idolImgs.length}/4 ditambah! ✦`);
   };
